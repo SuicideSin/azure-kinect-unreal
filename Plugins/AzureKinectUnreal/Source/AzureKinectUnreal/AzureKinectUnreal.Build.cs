@@ -1,5 +1,6 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
+using System.IO;
 using UnrealBuildTool;
 
 public class AzureKinectUnreal : ModuleRules
@@ -11,6 +12,7 @@ public class AzureKinectUnreal : ModuleRules
 		PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
+				Path.Combine(ModuleDirectory, "Public")
 			}
 			);
 				
@@ -18,6 +20,7 @@ public class AzureKinectUnreal : ModuleRules
 		PrivateIncludePaths.AddRange(
 			new string[] {
 				// ... add other private include paths required here ...
+				Path.Combine(ModuleDirectory, "Private")
 			}
 			);
 			
@@ -49,5 +52,26 @@ public class AzureKinectUnreal : ModuleRules
 				// ... add any modules that your module loads dynamically here ...
 			}
 			);
+
+		// Include Azure Kinect Sensor and Body Tracking SDKs
+		string azureKinectSensorSDKPath = "E:/Program Files/Azure Kinect SDK v1.2.0/sdk";
+		string azureKinectBodyTrackingSDKPath = "E:/Program Files/Azure Kinect Body Tracking SDK/sdk";
+
+		PublicIncludePaths.AddRange(
+			new string[] {
+				Path.Combine(azureKinectSensorSDKPath, "include"),
+				Path.Combine(azureKinectBodyTrackingSDKPath, "include")
+			}
+			);
+
+		PublicLibraryPaths.Add(Path.Combine(azureKinectSensorSDKPath, "windows-desktop", "amd64", "release", "lib"));
+		PublicLibraryPaths.Add(Path.Combine(azureKinectBodyTrackingSDKPath, "windows-desktop", "amd64", "release", "lib"));
+
+		PublicAdditionalLibraries.AddRange(
+			new string[]
+			{
+				"k4a.lib",
+				"k4abt.lib"
+			});
 	}
 }
