@@ -26,6 +26,8 @@ public:
 
 	static void InitDevice(uint32 DeviceId = 0, k4a_depth_mode_t DepthMode = K4A_DEPTH_MODE_NFOV_UNBINNED);
 
+	static void CaptureBodyTrackingFrame(k4a_device_t Device, int32 TimeOutInMilliSecs = 0);
+
 	//static k4a_device_t GetDevice(uint32 DeviceId);
 
 private:

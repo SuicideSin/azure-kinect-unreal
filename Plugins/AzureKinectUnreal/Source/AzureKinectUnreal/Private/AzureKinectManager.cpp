@@ -67,6 +67,52 @@ void UAzureKinectManager::InitDevice(uint32 DeviceId, k4a_depth_mode_t DepthMode
 	}
 }
 
+void UAzureKinectManager::CaptureBodyTrackingFrame(k4a_device_t Device, int32 TimeOutInMilliSecs)
+{
+	if (!Device)
+	{
+		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device for capturing body tracking frame is Invalid!"));
+		return;
+	}
+
+	// Capture a depth frame
+	k4a_capture_t sensorCapture = NULL;
+	k4a_wait_result_t getCaptureResult = k4a_device_get_capture(Device, &sensorCapture, TimeOutInMilliSecs);
+	if (getCaptureResult != K4A_WAIT_RESULT_SUCCEEDED)
+	{
+		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device get capture %s!"), 
+			(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
+		return;
+	}
+
+	// Enqueue the capture
+	k4a_wait_result_t queueCaptureResult = k4abt_tracker_enqueue_capture(BodyTracker, sensorCapture, TimeOutInMilliSecs);
+	// Release the sensor capture
+	k4a_capture_release(sensorCapture);
+	if (queueCaptureResult != K4A_WAIT_RESULT_SUCCEEDED)
+	{
+		UE_LOG(AzureKinectLog, Error, TEXT("Adding capture to the Tracker process queue %s!"),
+			(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
+		return;
+	}
+
+	k4abt_frame_t bodyFrame = NULL;
+	k4a_wait_result_t popFrameResult = k4abt_tracker_pop_result(BodyTracker, &bodyFrame, TimeOutInMilliSecs);
+	if (popFrameResult != K4A_WAIT_RESULT_SUCCEEDED)
+	{
+		UE_LOG(AzureKinectLog, Error, TEXT("Tracker pop body frame result %s!"),
+			(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
+		return;
+	}
+
+	// Successfully popped the body tracking result
+
+	UE_LOG(AzureKinectLog, Warning, TEXT("%zu bodies are detected"), k4abt_frame_get_num_bodies(bodyFrame));
+
+	// Release the body frame
+	k4abt_frame_release(bodyFrame);
+}
+
 //k4a_device_t UAzureKinectManager::GetDevice(uint32 DeviceId)
 //{
 //	return Device;
