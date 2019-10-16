@@ -14,10 +14,13 @@
 	"IsBetaVersion": false,
 	"Installed": false,
 	"Modules": [
-		{
-			"Name": "AzureKinectUnreal",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		}
+        {
+            "Name": "AzureKinectUnreal",
+            "Type": "Runtime",
+            "LoadingPhase": "Default",
+            "WhitelistPlatforms": [
+                "Win64"
+            ]
+        }
 	]
 }

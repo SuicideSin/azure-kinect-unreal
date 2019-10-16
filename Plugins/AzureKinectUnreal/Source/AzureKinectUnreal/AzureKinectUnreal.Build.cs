@@ -64,6 +64,7 @@ public class AzureKinectUnreal : ModuleRules
 			}
 			);
 
+		// Libs path
 		PublicLibraryPaths.Add(Path.Combine(azureKinectSensorSDKPath, "windows-desktop", "amd64", "release", "lib"));
 		PublicLibraryPaths.Add(Path.Combine(azureKinectBodyTrackingSDKPath, "windows-desktop", "amd64", "release", "lib"));
 
