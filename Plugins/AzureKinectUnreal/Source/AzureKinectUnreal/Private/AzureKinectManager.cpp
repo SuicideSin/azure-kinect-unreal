@@ -14,20 +14,10 @@ UAzureKinectManager::UAzureKinectManager()
 
 UAzureKinectManager::~UAzureKinectManager()
 {
-	if (BodyTracker)
-	{
-		k4abt_tracker_shutdown(BodyTracker);
-		k4abt_tracker_destroy(BodyTracker);
-	}
-
-	if (KinectDevice)
-	{
-		k4a_device_stop_cameras(KinectDevice);
-		k4a_device_close(KinectDevice);
-	}
+	ShutdownDevice();
 }
 
-void UAzureKinectManager::InitDevice(uint32 DeviceId, k4a_depth_mode_t DepthMode)
+void UAzureKinectManager::InitDevice(int32 DeviceId, EKinectDepthMode DepthMode)
 {
 	// Open the Azure Kinect Device
 	k4a_result_t deviceOpenResult = k4a_device_open(DeviceId, &KinectDevice);
@@ -39,7 +29,7 @@ void UAzureKinectManager::InitDevice(uint32 DeviceId, k4a_depth_mode_t DepthMode
 
 	// Start the Camera and make sure the Depth Camera is Enabled
 	k4a_device_configuration_t deviceConfig = K4A_DEVICE_CONFIG_INIT_DISABLE_ALL;
-	deviceConfig.depth_mode = DepthMode;
+	deviceConfig.depth_mode = (k4a_depth_mode_t)DepthMode;
 	deviceConfig.color_resolution = K4A_COLOR_RESOLUTION_OFF;
 
 	k4a_result_t deviceStartCameraResult = k4a_device_start_cameras(KinectDevice, &deviceConfig);
@@ -57,7 +47,6 @@ void UAzureKinectManager::InitDevice(uint32 DeviceId, k4a_depth_mode_t DepthMode
 		return;
 	}
 
-	//k4abt_tracker_t tracker = NULL;
 	k4abt_tracker_configuration_t trackerConfig = K4ABT_TRACKER_CONFIG_DEFAULT;
 	k4a_result_t trackerCreateResult = k4abt_tracker_create(&sensorCalibration, trackerConfig, &BodyTracker);
 	if (trackerCreateResult != K4A_RESULT_SUCCEEDED)
@@ -72,6 +61,12 @@ void UAzureKinectManager::CaptureBodyTrackingFrame(k4a_device_t Device, int32 Ti
 	if (!Device)
 	{
 		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device for capturing body tracking frame is Invalid!"));
+		return;
+	}
+
+	if (!BodyTracker)
+	{
+		UE_LOG(AzureKinectLog, Error, TEXT("Body Tracker for capturing body tracking frame is Invalid!"));
 		return;
 	}
 
@@ -111,6 +106,23 @@ void UAzureKinectManager::CaptureBodyTrackingFrame(k4a_device_t Device, int32 Ti
 
 	// Release the body frame
 	k4abt_frame_release(bodyFrame);
+}
+
+void UAzureKinectManager::ShutdownDevice(int32 DeviceId)
+{
+	if (BodyTracker)
+	{
+		k4abt_tracker_shutdown(BodyTracker);
+		k4abt_tracker_destroy(BodyTracker);
+		UE_LOG(AzureKinectLog, Warning, TEXT("BodyTracker is Shutdown and Destroyed"));
+	}
+
+	if (KinectDevice)
+	{
+		k4a_device_stop_cameras(KinectDevice);
+		k4a_device_close(KinectDevice);
+		UE_LOG(AzureKinectLog, Warning, TEXT("KinectDevice Camera is Stopped and Closed"));
+	}
 }
 
 //k4a_device_t UAzureKinectManager::GetDevice(uint32 DeviceId)
