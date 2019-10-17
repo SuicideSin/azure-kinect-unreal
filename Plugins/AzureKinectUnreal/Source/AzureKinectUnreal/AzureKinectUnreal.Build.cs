@@ -42,6 +42,7 @@ public class AzureKinectUnreal : ModuleRules
 				"Slate",
 				"SlateCore",
 				// ... add private dependencies that you statically link with here ...	
+				"Projects"
 			}
 			);
 		
@@ -68,11 +69,39 @@ public class AzureKinectUnreal : ModuleRules
 		PublicLibraryPaths.Add(Path.Combine(azureKinectSensorSDKPath, "windows-desktop", "amd64", "release", "lib"));
 		PublicLibraryPaths.Add(Path.Combine(azureKinectBodyTrackingSDKPath, "windows-desktop", "amd64", "release", "lib"));
 
+		// Dlls path = Project/Plugins/AzureKinectUnreal/ThirdParty/dlls
+		// ModuleDirectory = Project/Plugins/AzureKinectUnreal/Source/AzureKinectUnreal
+		//PublicLibraryPaths.Add(Path.Combine(ModuleDirectory, "../../ThirdParty", "dlls"));
+
 		PublicAdditionalLibraries.AddRange(
 			new string[]
 			{
 				"k4a.lib",
 				"k4abt.lib"
 			});
+
+		// The dlls should be loaded in the Module's StartupModule
+		// and released in the ShutdownModule.
+		// Otherwise, put these dlls in Binaries folder and remove this PublicDelayLoadDLLs section
+		PublicDelayLoadDLLs.AddRange(
+			new string[]
+			{
+				"k4a.dll",
+				"k4abt.dll",
+				//"depthengine_2_0.dll",
+				//"onnxruntime.dll",
+				//"cudnn64_7.dll",
+				//"cublas64_100.dll",
+				//"cudart64_100.dll"
+			});
+
+		// Ensure that the DLL is staged along with the executable
+		RuntimeDependencies.Add("k4a.dll");
+		RuntimeDependencies.Add("k4abt.dll");
+		RuntimeDependencies.Add("depthengine_2_0.dll");
+		//RuntimeDependencies.Add("onnxruntime.dll");
+		//RuntimeDependencies.Add("cudnn64_7.dll");
+		//RuntimeDependencies.Add("cudart64_100.dll");
+		//RuntimeDependencies.Add("cublas64_100.dll");
 	}
 }
