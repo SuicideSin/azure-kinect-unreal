@@ -12,4 +12,8 @@ public:
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
+
+private:
+	static void* K4ADllHandle;
+	static void* K4ABTDllHandle;
 };

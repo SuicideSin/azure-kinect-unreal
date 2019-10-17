@@ -42,6 +42,7 @@ public class AzureKinectUnreal : ModuleRules
 				"Slate",
 				"SlateCore",
 				// ... add private dependencies that you statically link with here ...	
+				"Projects"
 			}
 			);
 		
@@ -68,11 +69,28 @@ public class AzureKinectUnreal : ModuleRules
 		PublicLibraryPaths.Add(Path.Combine(azureKinectSensorSDKPath, "windows-desktop", "amd64", "release", "lib"));
 		PublicLibraryPaths.Add(Path.Combine(azureKinectBodyTrackingSDKPath, "windows-desktop", "amd64", "release", "lib"));
 
+		// Dlls path
+		//PublicLibraryPaths.Add(Path.Combine(azureKinectSensorSDKPath, "windows-desktop", "amd64", "release", "bin"));
+		//PublicLibraryPaths.Add(Path.Combine(azureKinectBodyTrackingSDKPath, "windows-desktop", "amd64", "release", "bin"));
+		PublicLibraryPaths.Add(Path.Combine(ModuleDirectory, "../ThirdParty", "dlls"));
+
 		PublicAdditionalLibraries.AddRange(
 			new string[]
 			{
 				"k4a.lib",
 				"k4abt.lib"
+			});
+
+		PublicDelayLoadDLLs.AddRange(
+			new string[]
+			{
+				"k4a.dll",
+				"k4abt.dll",
+				//"depthengine_2_0.dll",
+				//"onnxruntime.dll",
+				//"cudnn64_7.dll",
+				//"cublas64_100.dll",
+				//"cudart64_100.dll"
 			});
 	}
 }
