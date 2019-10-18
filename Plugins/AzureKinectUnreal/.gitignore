@@ -1,0 +1,8 @@
+# Compiled Dynamic libraries
+!Binaries/*
+Binaries/*/*
+!Binaries/*/*.dll
+Binaries/*/UE4*.dll
+
+# Compiled Static libraries
+!*.lib

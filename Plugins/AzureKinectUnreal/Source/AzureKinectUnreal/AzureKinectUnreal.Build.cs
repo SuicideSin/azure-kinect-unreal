@@ -54,19 +54,20 @@ public class AzureKinectUnreal : ModuleRules
 			);
 
 		// Include Azure Kinect Sensor and Body Tracking SDKs
-		string azureKinectSensorSDKPath = "E:/Program Files/Azure Kinect SDK v1.2.0/sdk";
-		string azureKinectBodyTrackingSDKPath = "E:/Program Files/Azure Kinect Body Tracking SDK/sdk";
+		string thirdPartyPath = Path.Combine(ModuleDirectory, "../../ThirdParty");  //ModuleDirectory = Project/Plugins/AzureKinectUnreal/Source/AzureKinectUnreal
+		string azureKinectSensorSDKPath = Path.Combine(thirdPartyPath, "AzureKinectSensor");
+		string azureKinectBodyTrackingSDKPath = Path.Combine(thirdPartyPath, "AzureKinectBodyTracking");
 
 		PublicIncludePaths.AddRange(
-			new string[] {
+			new string[]
+			{
 				Path.Combine(azureKinectSensorSDKPath, "include"),
 				Path.Combine(azureKinectBodyTrackingSDKPath, "include")
-			}
-			);
+			});
 
 		// Libs path
-		PublicLibraryPaths.Add(Path.Combine(azureKinectSensorSDKPath, "windows-desktop", "amd64", "release", "lib"));
-		PublicLibraryPaths.Add(Path.Combine(azureKinectBodyTrackingSDKPath, "windows-desktop", "amd64", "release", "lib"));
+		PublicLibraryPaths.Add(Path.Combine(azureKinectSensorSDKPath, "amd64", "lib"));
+		PublicLibraryPaths.Add(Path.Combine(azureKinectBodyTrackingSDKPath, "amd64", "lib"));
 
 		PublicAdditionalLibraries.AddRange(
 			new string[]
