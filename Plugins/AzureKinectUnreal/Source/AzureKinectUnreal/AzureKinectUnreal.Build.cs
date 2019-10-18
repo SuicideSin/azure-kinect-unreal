@@ -96,9 +96,9 @@ public class AzureKinectUnreal : ModuleRules
 			});
 
 		// Ensure that the DLL is staged along with the executable
-		RuntimeDependencies.Add("k4a.dll");
-		RuntimeDependencies.Add("k4abt.dll");
-		RuntimeDependencies.Add("depthengine_2_0.dll");
+		RuntimeDependencies.Add("k4a.dll"); //"$(PluginDir)/ThirdParty/dlls/k4a.dll"
+		RuntimeDependencies.Add("k4abt.dll");    //Path.Combine(ModuleDirectory, "../../ThirdParty", "dlls", "k4abt.dll")
+		RuntimeDependencies.Add("depthengine_2_0.dll");	//Path.Combine(ModuleDirectory, "../../ThirdParty", "dlls", "depthengine_2_0.dll")
 		//RuntimeDependencies.Add("onnxruntime.dll");
 		//RuntimeDependencies.Add("cudnn64_7.dll");
 		//RuntimeDependencies.Add("cudart64_100.dll");

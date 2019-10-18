@@ -1,9 +1,9 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "AzureKinectUnreal.h"
-#include "IPluginManager.h"
-#include "PlatformProcess.h"
-#include "Paths.h"
+#include "Interfaces/IPluginManager.h"
+#include "HAL/PlatformProcess.h"
+#include "Misc/Paths.h"
 
 #define LOCTEXT_NAMESPACE "FAzureKinectUnrealModule"
 
