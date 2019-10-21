@@ -36,7 +36,7 @@ public:
 	//static k4a_device_t GetDevice(uint32 DeviceId);
 
 private:
-	static k4a_device_t KinectDevice;
+	//static k4a_device_t KinectDevice;
 
-	static k4abt_tracker_t BodyTracker;
+	//static k4abt_tracker_t BodyTracker;
 };
