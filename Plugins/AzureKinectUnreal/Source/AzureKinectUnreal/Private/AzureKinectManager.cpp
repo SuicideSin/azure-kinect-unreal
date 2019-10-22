@@ -14,7 +14,7 @@ UAzureKinectManager::UAzureKinectManager()
 
 UAzureKinectManager::~UAzureKinectManager()
 {
-	ShutdownDevice();
+	//ShutdownDevice();
 }
 
 void UAzureKinectManager::InitDevice(int32 DeviceId, EKinectDepthMode DepthMode)
@@ -56,9 +56,9 @@ void UAzureKinectManager::InitDevice(int32 DeviceId, EKinectDepthMode DepthMode)
 	}
 }
 
-void UAzureKinectManager::CaptureBodyTrackingFrame(k4a_device_t Device, int32 TimeOutInMilliSecs)
+void UAzureKinectManager::CaptureBodyTrackingFrame(int32 TimeOutInMilliSecs)	//k4a_device_t Device,
 {
-	if (!Device)
+	if (!KinectDevice)
 	{
 		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device for capturing body tracking frame is Invalid!"));
 		return;
@@ -72,7 +72,7 @@ void UAzureKinectManager::CaptureBodyTrackingFrame(k4a_device_t Device, int32 Ti
 
 	// Capture a depth frame
 	k4a_capture_t sensorCapture = NULL;
-	k4a_wait_result_t getCaptureResult = k4a_device_get_capture(Device, &sensorCapture, TimeOutInMilliSecs);
+	k4a_wait_result_t getCaptureResult = k4a_device_get_capture(KinectDevice, &sensorCapture, TimeOutInMilliSecs);
 	if (getCaptureResult != K4A_WAIT_RESULT_SUCCEEDED)
 	{
 		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device get capture %s!"), 
@@ -101,8 +101,12 @@ void UAzureKinectManager::CaptureBodyTrackingFrame(k4a_device_t Device, int32 Ti
 	}
 
 	// Successfully popped the body tracking result
-
-	UE_LOG(AzureKinectLog, Warning, TEXT("%zu bodies are detected"), k4abt_frame_get_num_bodies(bodyFrame));
+	size_t numBodies = k4abt_frame_get_num_bodies(bodyFrame);
+	UE_LOG(AzureKinectLog, Warning, TEXT("%zu bodies are detected"), numBodies);
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("%zu bodies are detected"), numBodies));
+	}
 
 	// Release the body frame
 	k4abt_frame_release(bodyFrame);
@@ -127,5 +131,5 @@ void UAzureKinectManager::ShutdownDevice(int32 DeviceId)
 
 //k4a_device_t UAzureKinectManager::GetDevice(uint32 DeviceId)
 //{
-//	return Device;
+//	return KinectDevice;
 //}
