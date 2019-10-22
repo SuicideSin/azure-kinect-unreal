@@ -21,6 +21,8 @@ The following dlls and their dependency files are needed for the Azure Kinect AP
 
 Currently, they are put in Plugin Binaries folder (`Plugins/AzureKinectUnreal/Binaries/Win64/`) since Unreal will search in Engine/Binaries/Win64, Project/Binaries/Win64, Engine/Plugins/.../Binaries/Win64 and Project/Plugins/.../Binaries/Win64 and load them.
 
+_**Important Note:** In order to run the project in Unreal Editor and call the Azure Kinect API without issues, the above mentioned dependent files should be copied to the Unreal installation folder where `UE4Editor.exe` resides._
+
 If the dlls are put in a **different folder** then the dll will not be loaded and Unreal will most likely crash when the call to the Kinect API is made.
 In order to fix this, the following should be done.
  1. The dll path should be added to `PublicLibraryPaths` and the dll should be added to `PublicDelayLoadDLLs` in the `<Plugin>.Build.cs`.
