@@ -3,14 +3,16 @@
 
 #include "AzureKinectThread.h"
 #include "HAL/PlatformProcess.h"
+#include "AzureKinectDevice.h"
 
 DEFINE_LOG_CATEGORY(AzureKinectThreadLog);
 
 FAzureKinectThread *FAzureKinectThread::Instance = nullptr;
 
-FAzureKinectThread::FAzureKinectThread() :
+FAzureKinectThread::FAzureKinectThread(AzureKinectDevice *Device) :
 	KinectThread(nullptr),
-	StopThreadCounter(0)
+	StopThreadCounter(0),
+	KinectDevice(Device)
 {
 	KinectThread = FRunnableThread::Create(this, TEXT("FAzureKinectThread"), 0, TPri_BelowNormal); //windows default = 8mb for thread, could specify more
 	if (!KinectThread)
@@ -28,13 +30,13 @@ FAzureKinectThread::~FAzureKinectThread()
 	}
 }
 
-FAzureKinectThread * FAzureKinectThread::InitPolling()
+FAzureKinectThread * FAzureKinectThread::InitPolling(AzureKinectDevice *Device)
 {
 	//Create new instance of thread if it does not exist
 	//		and the platform supports multi threading!
 	if (!Instance && FPlatformProcess::SupportsMultithreading())
 	{
-		Instance = new FAzureKinectThread();
+		Instance = new FAzureKinectThread(Device);
 	}
 	return Instance;
 }
@@ -72,11 +74,26 @@ bool FAzureKinectThread::Init()
 
 uint32 FAzureKinectThread::Run()
 {
-	UE_LOG(AzureKinectThreadLog, Log, TEXT("Azure Kinect thread running."));
+	if (!KinectDevice)
+	{
+		UE_LOG(AzureKinectThreadLog, Error, TEXT("KinectDevice is null, could not run the thread"));
+		return 1;
+	}
+
+	const float UpdateInterval = FMath::Max(0.0f, (KinectDevice->GetTimeOutInMilliSecs() / 1000.0f));
+	UE_LOG(AzureKinectThreadLog, Log, TEXT("Azure Kinect thread running with interval : %d"), UpdateInterval);
 
 	while (StopThreadCounter.GetValue() == 0)
 	{
+		// Do Kinect capture, enqueue, pop body frame stuff
+		KinectDevice->CaptureBodyTrackingFrame();
 
+		// may be don't need this since the Kinect API calls will
+		// be blocking if the Timeout is non-zero.
+		//if (UpdateInterval > 0.0f)
+		//{
+		//	FPlatformProcess::Sleep(UpdateInterval);
+		//}
 	}
 
 	return 0;

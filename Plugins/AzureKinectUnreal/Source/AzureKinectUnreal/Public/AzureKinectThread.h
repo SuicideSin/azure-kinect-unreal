@@ -6,6 +6,8 @@
 #include "HAL/Runnable.h"
 #include "HAL/RunnableThread.h"
 
+class AzureKinectDevice;
+
 DECLARE_LOG_CATEGORY_EXTERN(AzureKinectThreadLog, Log, All);
 
 /**
@@ -14,10 +16,10 @@ DECLARE_LOG_CATEGORY_EXTERN(AzureKinectThreadLog, Log, All);
 class AZUREKINECTUNREAL_API FAzureKinectThread : public FRunnable
 {
 public:
-	FAzureKinectThread();
+	FAzureKinectThread(AzureKinectDevice *Device);
 	~FAzureKinectThread();
 
-	static FAzureKinectThread *InitPolling();
+	static FAzureKinectThread *InitPolling(AzureKinectDevice *Device);
 
 	static void Shutdown();
 
@@ -38,5 +40,5 @@ private:
 
 	FThreadSafeCounter StopThreadCounter;
 
-
+	AzureKinectDevice *KinectDevice;
 };
