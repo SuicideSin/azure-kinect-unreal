@@ -3,10 +3,145 @@
 
 #include "AzureKinectDevice.h"
 
-AzureKinectDevice::AzureKinectDevice()
+DEFINE_LOG_CATEGORY(AzureKinectDeviceLog);
+
+AzureKinectDevice::AzureKinectDevice() :
+	AzureKinectDevice(0, 0)
+{
+}
+
+AzureKinectDevice::AzureKinectDevice(int32 Id, int32 TimeOut) :
+	NativeKinectDevice(nullptr),	//NULL
+	DeviceId(Id),
+	NativeBodyTracker(nullptr),	//NULL
+	TimeOutInMilliSecs(TimeOut),
+	Thread(nullptr)
 {
 }
 
 AzureKinectDevice::~AzureKinectDevice()
 {
+	Shutdown();
+}
+
+void AzureKinectDevice::Initialize(k4a_depth_mode_t DepthMode)
+{
+	// Open the Azure Kinect Device
+	k4a_result_t deviceOpenResult = k4a_device_open(DeviceId, &NativeKinectDevice);
+	if (deviceOpenResult != K4A_RESULT_SUCCEEDED)
+	{
+		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Open Kinect device (id : %d) Failed!"), DeviceId);
+		return;
+	}
+
+	// Start the Camera and make sure the Depth Camera is Enabled
+	k4a_device_configuration_t deviceConfig = K4A_DEVICE_CONFIG_INIT_DISABLE_ALL;
+	deviceConfig.depth_mode = DepthMode;
+	deviceConfig.color_resolution = K4A_COLOR_RESOLUTION_OFF;
+
+	k4a_result_t deviceStartCameraResult = k4a_device_start_cameras(NativeKinectDevice, &deviceConfig);
+	if (deviceStartCameraResult != K4A_RESULT_SUCCEEDED)
+	{
+		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Kinect device (id : %d) start camera Failed!"), DeviceId);
+		return;
+	}
+
+	k4a_calibration_t sensorCalibration;
+	k4a_result_t deviceCalibrationResult = k4a_device_get_calibration(NativeKinectDevice, deviceConfig.depth_mode, deviceConfig.color_resolution, &sensorCalibration);
+	if (deviceCalibrationResult != K4A_RESULT_SUCCEEDED)
+	{
+		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Kinect device (id : %d) get depth camera calibration Failed!"), DeviceId);
+		return;
+	}
+
+	k4abt_tracker_configuration_t trackerConfig = K4ABT_TRACKER_CONFIG_DEFAULT;
+	k4a_result_t trackerCreateResult = k4abt_tracker_create(&sensorCalibration, trackerConfig, &NativeBodyTracker);
+	if (trackerCreateResult != K4A_RESULT_SUCCEEDED)
+	{
+		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Kinect device (id : %d) - Body Tracker creation Failed!"), DeviceId);
+		return;
+	}
+}
+
+void AzureKinectDevice::Shutdown()
+{
+	if (Thread)
+	{
+		Thread->Shutdown();
+	}
+
+	if (NativeBodyTracker)
+	{
+		k4abt_tracker_shutdown(NativeBodyTracker);
+		k4abt_tracker_destroy(NativeBodyTracker);
+		UE_LOG(AzureKinectDeviceLog, Warning, TEXT("BodyTracker is Shutdown and Destroyed"));
+	}
+
+	if (NativeKinectDevice)
+	{
+		k4a_device_stop_cameras(NativeKinectDevice);
+		k4a_device_close(NativeKinectDevice);
+		UE_LOG(AzureKinectDeviceLog, Warning, TEXT("KinectDevice Camera is Stopped and Closed"));
+	}
+}
+
+void AzureKinectDevice::CaptureBodyTrackingFrame()
+{
+	if (!NativeKinectDevice)
+	{
+		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Kinect device for capturing body tracking frame is Invalid!"));
+		return;
+	}
+
+	if (!NativeBodyTracker)
+	{
+		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Body Tracker for capturing body tracking frame is Invalid!"));
+		return;
+	}
+
+	// Capture a depth frame
+	k4a_capture_t sensorCapture = NULL;
+	k4a_wait_result_t getCaptureResult = k4a_device_get_capture(NativeKinectDevice, &sensorCapture, TimeOutInMilliSecs);
+	if (getCaptureResult != K4A_WAIT_RESULT_SUCCEEDED)
+	{
+		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Kinect device get capture %s!"),
+			(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
+		return;
+	}
+
+	// Enqueue the capture
+	k4a_wait_result_t queueCaptureResult = k4abt_tracker_enqueue_capture(NativeBodyTracker, sensorCapture, TimeOutInMilliSecs);
+	// Release the sensor capture
+	k4a_capture_release(sensorCapture);
+	if (queueCaptureResult != K4A_WAIT_RESULT_SUCCEEDED)
+	{
+		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Adding capture to the Tracker process queue %s!"),
+			(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
+		return;
+	}
+
+	k4abt_frame_t bodyFrame = NULL;
+	k4a_wait_result_t popFrameResult = k4abt_tracker_pop_result(NativeBodyTracker, &bodyFrame, TimeOutInMilliSecs);
+	if (popFrameResult != K4A_WAIT_RESULT_SUCCEEDED)
+	{
+		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Tracker pop body frame result %s!"),
+			(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
+		return;
+	}
+
+	// Successfully popped the body tracking result
+	size_t numBodies = k4abt_frame_get_num_bodies(bodyFrame);
+	UE_LOG(AzureKinectDeviceLog, Warning, TEXT("%zu bodies are detected"), numBodies);
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("%zu bodies are detected"), numBodies));
+	}
+
+	// Release the body frame
+	k4abt_frame_release(bodyFrame);
+}
+
+int32 AzureKinectDevice::GetTimeOutInMilliSecs() const
+{
+	return TimeOutInMilliSecs;
 }
