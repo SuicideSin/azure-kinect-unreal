@@ -4,9 +4,8 @@
 
 #include "CoreMinimal.h"
 //#include "UObject/NoExportTypes.h"
-#include <k4a/k4a.h>
-#include <k4abt.h>
 #include <AzureKinectEnums.h>
+#include <AzureKinectDevice.h>
 #include "AzureKinectManager.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(AzureKinectLog, Log, All);
@@ -25,26 +24,27 @@ public:
 	/** Destructor */
 	~UAzureKinectManager();
 
-	UFUNCTION(BlueprintCallable, Category = "Azure Kinect", meta = (DisplayName = "Init Azure Kinect"))
-	static void InitDevice(int32 DeviceId = 0, EKinectDepthMode DepthMode = EKinectDepthMode::K4A_DEPTH_MODE_NFOV_UNBINNED);
-
-	/** 
-	 * Captures the device body tracking frame, enqueues the capture, pops the tracker body frame result 
-	 * and releases the body frame.
+	/**
+	 * Initializes the azure kinect device with the given details and if the initialization is 
+	 * successful, then adds it to the TMap.
 	 *
+	 * @param DeviceId The device id of the Azure Kinect Device to initialize
+	 * @param DepthMode The default is set to NFOV_UNBINNED. For body tracking it should be NFOV_UNBINNED or WFOV_BINNED
 	 * @param TimeOutInMilliSecs Default is Zero (Non-blocking). Set it to -1 (K4A_WAIT_INFINITE) for Blocking call.
 	 */
-	UFUNCTION(BlueprintCallable, Category = "Azure Kinect", meta = (DisplayName = "Capture Body Tracking Frame"))
-	static void CaptureBodyTrackingFrame(int32 TimeOutInMilliSecs = 0);	//k4a_device_t Device,
+	UFUNCTION(BlueprintCallable, Category = "Azure Kinect", meta = (DisplayName = "Init Azure Kinect"))
+	static void InitDevice(int32 DeviceId = 0, EKinectDepthMode DepthMode = EKinectDepthMode::K4A_DEPTH_MODE_NFOV_UNBINNED, int32 TimeOutInMilliSecs = 0);
 
 	UFUNCTION(BlueprintCallable, Category = "Azure Kinect", meta = (DisplayName = "Shutdown Azure Kinect"))
 	static void ShutdownDevice(int32 DeviceId = 0);
 
 	//UFUNCTION(BlueprintCallable, Category = "Azure Kinect", meta = (DisplayName = "Get Azure Kinect Device"))
-	//static k4a_device_t GetDevice(uint32 DeviceId);
+	static AzureKinectDevice* GetDevice(uint32 DeviceId);
 
 private:
-	static k4a_device_t KinectDevice;
+	static UAzureKinectManager *Instance;
+	
+	TMap<int32, AzureKinectDevice*> KinectDevicesById;
 
-	static k4abt_tracker_t BodyTracker;
+	void ShutdownAllDevices();
 };

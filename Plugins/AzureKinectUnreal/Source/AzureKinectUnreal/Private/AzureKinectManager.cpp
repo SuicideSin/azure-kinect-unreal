@@ -5,8 +5,7 @@
 
 DEFINE_LOG_CATEGORY(AzureKinectLog);
 
-k4a_device_t UAzureKinectManager::KinectDevice = NULL;
-k4abt_tracker_t UAzureKinectManager::BodyTracker = NULL;
+UAzureKinectManager *UAzureKinectManager::Instance = nullptr;
 
 UAzureKinectManager::UAzureKinectManager()
 {
@@ -14,122 +13,102 @@ UAzureKinectManager::UAzureKinectManager()
 
 UAzureKinectManager::~UAzureKinectManager()
 {
-	//ShutdownDevice();
+	ShutdownAllDevices();
+
+	//if (Instance)
+	//{
+	//	delete Instance;
+	//	Instance = nullptr;
+	//}
+	RemoveFromRoot();
+	Instance = nullptr;
 }
 
-void UAzureKinectManager::InitDevice(int32 DeviceId, EKinectDepthMode DepthMode)
+void UAzureKinectManager::InitDevice(int32 DeviceId, EKinectDepthMode DepthMode, int32 TimeOutInMilliSecs)
 {
-	// Open the Azure Kinect Device
-	k4a_result_t deviceOpenResult = k4a_device_open(DeviceId, &KinectDevice);
-	if (deviceOpenResult != K4A_RESULT_SUCCEEDED)
+	if (!Instance)
 	{
-		UE_LOG(AzureKinectLog, Error, TEXT("Open Kinect device (id : %d) Failed!"), DeviceId);
+		Instance = NewObject<UAzureKinectManager>();
+		if (!Instance)
+		{
+			UE_LOG(AzureKinectLog, Error, TEXT("Could not create an instance for UAzureKinectManager"));
+			return;
+		}
+
+		Instance->AddToRoot();
+	}
+
+	if (Instance->KinectDevicesById.Contains(DeviceId))
+	{
+		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device (id : %d) already initialized"), DeviceId);
 		return;
 	}
 
-	// Start the Camera and make sure the Depth Camera is Enabled
-	k4a_device_configuration_t deviceConfig = K4A_DEVICE_CONFIG_INIT_DISABLE_ALL;
-	deviceConfig.depth_mode = (k4a_depth_mode_t)DepthMode;
-	deviceConfig.color_resolution = K4A_COLOR_RESOLUTION_OFF;
+	AzureKinectDevice *KinectDevice = new AzureKinectDevice(DeviceId, TimeOutInMilliSecs);
+	bool bIsInitialized = KinectDevice->Initialize((k4a_depth_mode_t)DepthMode);
 
-	k4a_result_t deviceStartCameraResult = k4a_device_start_cameras(KinectDevice, &deviceConfig);
-	if (deviceStartCameraResult != K4A_RESULT_SUCCEEDED)
+	if (bIsInitialized)
 	{
-		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device (id : %d) start camera Failed!"), DeviceId);
-		return;
+		Instance->KinectDevicesById.Add(DeviceId, KinectDevice);
+		UE_LOG(AzureKinectLog, Warning, TEXT("Kinect device (id : %d) added to TMap : Count : %d"), DeviceId, Instance->KinectDevicesById.Num());
 	}
-
-	k4a_calibration_t sensorCalibration;
-	k4a_result_t deviceCalibrationResult = k4a_device_get_calibration(KinectDevice, deviceConfig.depth_mode, deviceConfig.color_resolution, &sensorCalibration);
-	if (deviceCalibrationResult != K4A_RESULT_SUCCEEDED)
+	else
 	{
-		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device (id : %d) get depth camera calibration Failed!"), DeviceId);
-		return;
+		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device (id : %d) initialization Failed"), DeviceId);
+		KinectDevice->Shutdown();
 	}
-
-	k4abt_tracker_configuration_t trackerConfig = K4ABT_TRACKER_CONFIG_DEFAULT;
-	k4a_result_t trackerCreateResult = k4abt_tracker_create(&sensorCalibration, trackerConfig, &BodyTracker);
-	if (trackerCreateResult != K4A_RESULT_SUCCEEDED)
-	{
-		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device (id : %d) - Body Tracker creation Failed!"), DeviceId);
-		return;
-	}
-}
-
-void UAzureKinectManager::CaptureBodyTrackingFrame(int32 TimeOutInMilliSecs)	//k4a_device_t Device,
-{
-	if (!KinectDevice)
-	{
-		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device for capturing body tracking frame is Invalid!"));
-		return;
-	}
-
-	if (!BodyTracker)
-	{
-		UE_LOG(AzureKinectLog, Error, TEXT("Body Tracker for capturing body tracking frame is Invalid!"));
-		return;
-	}
-
-	// Capture a depth frame
-	k4a_capture_t sensorCapture = NULL;
-	k4a_wait_result_t getCaptureResult = k4a_device_get_capture(KinectDevice, &sensorCapture, TimeOutInMilliSecs);
-	if (getCaptureResult != K4A_WAIT_RESULT_SUCCEEDED)
-	{
-		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device get capture %s!"), 
-			(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
-		return;
-	}
-
-	// Enqueue the capture
-	k4a_wait_result_t queueCaptureResult = k4abt_tracker_enqueue_capture(BodyTracker, sensorCapture, TimeOutInMilliSecs);
-	// Release the sensor capture
-	k4a_capture_release(sensorCapture);
-	if (queueCaptureResult != K4A_WAIT_RESULT_SUCCEEDED)
-	{
-		UE_LOG(AzureKinectLog, Error, TEXT("Adding capture to the Tracker process queue %s!"),
-			(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
-		return;
-	}
-
-	k4abt_frame_t bodyFrame = NULL;
-	k4a_wait_result_t popFrameResult = k4abt_tracker_pop_result(BodyTracker, &bodyFrame, TimeOutInMilliSecs);
-	if (popFrameResult != K4A_WAIT_RESULT_SUCCEEDED)
-	{
-		UE_LOG(AzureKinectLog, Error, TEXT("Tracker pop body frame result %s!"),
-			(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
-		return;
-	}
-
-	// Successfully popped the body tracking result
-	size_t numBodies = k4abt_frame_get_num_bodies(bodyFrame);
-	UE_LOG(AzureKinectLog, Warning, TEXT("%zu bodies are detected"), numBodies);
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("%zu bodies are detected"), numBodies));
-	}
-
-	// Release the body frame
-	k4abt_frame_release(bodyFrame);
 }
 
 void UAzureKinectManager::ShutdownDevice(int32 DeviceId)
 {
-	if (BodyTracker)
+	if (!Instance)
 	{
-		k4abt_tracker_shutdown(BodyTracker);
-		k4abt_tracker_destroy(BodyTracker);
-		UE_LOG(AzureKinectLog, Warning, TEXT("BodyTracker is Shutdown and Destroyed"));
+		UE_LOG(AzureKinectLog, Error, TEXT("UAzureKinectManager Instance is nullptr"));
+		return;
 	}
 
-	if (KinectDevice)
+	AzureKinectDevice **Device = Instance->KinectDevicesById.Find(DeviceId);
+	if (!Device || !(*Device))
 	{
-		k4a_device_stop_cameras(KinectDevice);
-		k4a_device_close(KinectDevice);
-		UE_LOG(AzureKinectLog, Warning, TEXT("KinectDevice Camera is Stopped and Closed"));
+		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device (id : %d) was not initialized to be shutdown"), DeviceId);
+		return;
 	}
+
+	(*Device)->Shutdown();
+	Instance->KinectDevicesById.Remove(DeviceId);
+
+	//AzureKinectDevice *Device = nullptr;
+	//bool bDidFind = Instance->KinectDevicesById.RemoveAndCopyValue(DeviceId, Device);
+	//if (!Device)
+	//{
+	//	UE_LOG(AzureKinectLog, Error, TEXT("Kinect device (id : %d) was not initialized to be shutdown"), DeviceId);
+	//	return;
+	//}
+
+	//Device->Shutdown();
 }
 
-//k4a_device_t UAzureKinectManager::GetDevice(uint32 DeviceId)
-//{
-//	return KinectDevice;
-//}
+void UAzureKinectManager::ShutdownAllDevices()
+{
+	for (TPair<int32, AzureKinectDevice*> kvp : KinectDevicesById)
+	{
+		if (kvp.Value)
+		{
+			kvp.Value->Shutdown();
+		}
+	}
+
+	KinectDevicesById.Empty();
+}
+
+AzureKinectDevice *UAzureKinectManager::GetDevice(uint32 DeviceId)
+{
+	AzureKinectDevice **Device = Instance->KinectDevicesById.Find(DeviceId);
+	if (!Device || !(*Device))
+	{
+		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device (id : %d) was not found"), DeviceId);
+		return nullptr;
+	}
+
+	return (*Device);
+}
