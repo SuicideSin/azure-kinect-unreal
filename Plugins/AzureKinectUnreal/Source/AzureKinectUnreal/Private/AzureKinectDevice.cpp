@@ -15,7 +15,8 @@ AzureKinectDevice::AzureKinectDevice(int32 Id, int32 TimeOut) :
 	DeviceId(Id),
 	NativeBodyTracker(nullptr),	//NULL
 	TimeOutInMilliSecs(TimeOut),
-	Thread(nullptr)
+	Thread(nullptr),
+	bIsInitialized(false)
 {
 }
 
@@ -24,14 +25,14 @@ AzureKinectDevice::~AzureKinectDevice()
 	Shutdown();
 }
 
-void AzureKinectDevice::Initialize(k4a_depth_mode_t DepthMode)
+bool AzureKinectDevice::Initialize(k4a_depth_mode_t DepthMode)
 {
 	// Open the Azure Kinect Device
 	k4a_result_t deviceOpenResult = k4a_device_open(DeviceId, &NativeKinectDevice);
 	if (deviceOpenResult != K4A_RESULT_SUCCEEDED)
 	{
 		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Open Kinect device (id : %d) Failed!"), DeviceId);
-		return;
+		return false;
 	}
 
 	// Start the Camera and make sure the Depth Camera is Enabled
@@ -43,7 +44,7 @@ void AzureKinectDevice::Initialize(k4a_depth_mode_t DepthMode)
 	if (deviceStartCameraResult != K4A_RESULT_SUCCEEDED)
 	{
 		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Kinect device (id : %d) start camera Failed!"), DeviceId);
-		return;
+		return false;
 	}
 
 	k4a_calibration_t sensorCalibration;
@@ -51,7 +52,7 @@ void AzureKinectDevice::Initialize(k4a_depth_mode_t DepthMode)
 	if (deviceCalibrationResult != K4A_RESULT_SUCCEEDED)
 	{
 		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Kinect device (id : %d) get depth camera calibration Failed!"), DeviceId);
-		return;
+		return false;
 	}
 
 	k4abt_tracker_configuration_t trackerConfig = K4ABT_TRACKER_CONFIG_DEFAULT;
@@ -59,8 +60,11 @@ void AzureKinectDevice::Initialize(k4a_depth_mode_t DepthMode)
 	if (trackerCreateResult != K4A_RESULT_SUCCEEDED)
 	{
 		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Kinect device (id : %d) - Body Tracker creation Failed!"), DeviceId);
-		return;
+		return false;
 	}
+
+	bIsInitialized = true;
+	return true;
 }
 
 void AzureKinectDevice::Shutdown()
@@ -68,6 +72,7 @@ void AzureKinectDevice::Shutdown()
 	if (Thread)
 	{
 		Thread->Shutdown();
+		Thread = nullptr;
 	}
 
 	if (NativeBodyTracker)

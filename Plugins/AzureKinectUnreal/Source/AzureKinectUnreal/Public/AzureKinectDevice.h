@@ -19,7 +19,7 @@ public:
 	AzureKinectDevice(int32 DeviceId, int32 TimeOut);
 	~AzureKinectDevice();
 
-	void Initialize(k4a_depth_mode_t DepthMode);
+	bool Initialize(k4a_depth_mode_t DepthMode);
 	void Shutdown();
 	void CaptureBodyTrackingFrame();
 
@@ -34,4 +34,6 @@ private:
 	int32 TimeOutInMilliSecs;
 
 	FAzureKinectThread *Thread;
+
+	bool bIsInitialized;
 };
