@@ -76,6 +76,7 @@ void UAzureKinectManager::ShutdownDevice(int32 DeviceId)
 
 	(*Device)->Shutdown();
 	Instance->KinectDevicesById.Remove(DeviceId);
+	UE_LOG(AzureKinectLog, Warning, TEXT("Kinect device (id : %d) was shutdown. TMap count : %d"), DeviceId, Instance->KinectDevicesById.Num());
 
 	//AzureKinectDevice *Device = nullptr;
 	//bool bDidFind = Instance->KinectDevicesById.RemoveAndCopyValue(DeviceId, Device);
