@@ -32,8 +32,8 @@ FAzureKinectThread::~FAzureKinectThread()
 
 FAzureKinectThread * FAzureKinectThread::InitPolling(AzureKinectDevice *Device)
 {
-	//Create new instance of thread if it does not exist
-	//		and the platform supports multi threading!
+	// Create new instance of thread if it does not exist
+	// and the platform supports multi threading!
 	if (!Instance && FPlatformProcess::SupportsMultithreading())
 	{
 		Instance = new FAzureKinectThread(Device);

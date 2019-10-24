@@ -79,6 +79,7 @@ void AzureKinectDevice::Shutdown()
 	{
 		k4abt_tracker_shutdown(NativeBodyTracker);
 		k4abt_tracker_destroy(NativeBodyTracker);
+		NativeBodyTracker = nullptr;
 		UE_LOG(AzureKinectDeviceLog, Warning, TEXT("BodyTracker is Shutdown and Destroyed"));
 	}
 
@@ -86,6 +87,7 @@ void AzureKinectDevice::Shutdown()
 	{
 		k4a_device_stop_cameras(NativeKinectDevice);
 		k4a_device_close(NativeKinectDevice);
+		NativeKinectDevice = nullptr;
 		UE_LOG(AzureKinectDeviceLog, Warning, TEXT("KinectDevice Camera is Stopped and Closed"));
 	}
 }
