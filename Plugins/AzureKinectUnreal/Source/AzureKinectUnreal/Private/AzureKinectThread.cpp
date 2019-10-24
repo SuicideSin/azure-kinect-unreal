@@ -69,7 +69,7 @@ void FAzureKinectThread::EnsureCompletion()
 bool FAzureKinectThread::Init()
 {
 	UE_LOG(AzureKinectThreadLog, Log, TEXT("Azure Kinect thread started."));
-	return false;
+	return true;
 }
 
 uint32 FAzureKinectThread::Run()

@@ -64,6 +64,9 @@ bool AzureKinectDevice::Initialize(k4a_depth_mode_t DepthMode)
 	}
 
 	bIsInitialized = true;
+
+	StartKinectThread();
+
 	return true;
 }
 
@@ -151,4 +154,9 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 int32 AzureKinectDevice::GetTimeOutInMilliSecs() const
 {
 	return TimeOutInMilliSecs;
+}
+
+void AzureKinectDevice::StartKinectThread()
+{
+	Thread = FAzureKinectThread::InitPolling(this);
 }

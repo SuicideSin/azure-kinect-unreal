@@ -21,6 +21,11 @@ public:
 
 	bool Initialize(k4a_depth_mode_t DepthMode);
 	void Shutdown();
+
+	/**
+	 * Captures the device body tracking frame, enqueues the capture, pops the tracker body frame result
+	 * and releases the body frame.
+	 */
 	void CaptureBodyTrackingFrame();
 
 	int32 GetTimeOutInMilliSecs() const;
@@ -36,4 +41,6 @@ private:
 	FAzureKinectThread *Thread;
 
 	bool bIsInitialized;
+
+	void StartKinectThread();
 };
