@@ -147,6 +147,24 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 		GEngine->AddOnScreenDebugMessage(0, 5.0f, (numBodies > 0 ? FColor::Cyan : FColor::Red), FString::Printf(TEXT("%zu bodies are detected"), numBodies));
 	}
 
+	for (size_t i = 0; i < numBodies; i++)
+	{
+		k4abt_body_t body;
+		k4a_result_t bodySkeletonResult = k4abt_frame_get_body_skeleton(bodyFrame, i, &body.skeleton);
+		if (bodySkeletonResult != K4A_RESULT_SUCCEEDED)
+		{
+			UE_LOG(AzureKinectDeviceLog, Error, TEXT("Get Body Skeleton Failed!"));
+			break;
+		}
+
+		body.id = k4abt_frame_get_body_id(bodyFrame, i);
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(1, 5.0f, FColor::Cyan, FString::Printf(TEXT("\tBody Id : %d"), body.id));
+		}
+	}
+
 	// Release the body frame
 	k4abt_frame_release(bodyFrame);
 }
