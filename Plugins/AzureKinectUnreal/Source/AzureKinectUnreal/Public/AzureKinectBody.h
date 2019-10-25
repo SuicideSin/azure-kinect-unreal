@@ -28,9 +28,28 @@ struct FAzureKinectJoint
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Category = "Azure Kinect|Body")
 class AZUREKINECTUNREAL_API UAzureKinectBody : public UObject
 {
 	GENERATED_BODY()
 	
+public:
+	UAzureKinectBody();
+	~UAzureKinectBody();
+
+	UFUNCTION(BlueprintCallable, Category = "Azure Kinect|Body")
+	int32 GetId() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Azure Kinect|Body|Joints")
+	TArray<FAzureKinectJoint> GetJoints() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Azure Kinect|Body|Joints")
+	FAzureKinectJoint GetJoint(int32 index) const;
+
+private:
+
+	uint32 Id;
+
+	UPROPERTY()
+	TArray<FAzureKinectJoint> Joints;
 };
