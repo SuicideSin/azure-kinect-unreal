@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-//#include "UObject/NoExportTypes.h"
+#include "UObject/NoExportTypes.h"
 #include <AzureKinectEnums.h>
 #include <AzureKinectDevice.h>
 #include "AzureKinectManager.generated.h"

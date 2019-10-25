@@ -144,7 +144,7 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 	UE_LOG(AzureKinectDeviceLog, Warning, TEXT("%zu bodies are detected"), numBodies);
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("%zu bodies are detected"), numBodies));
+		GEngine->AddOnScreenDebugMessage(0, 5.0f, (numBodies > 0 ? FColor::Cyan : FColor::Red), FString::Printf(TEXT("%zu bodies are detected"), numBodies));
 	}
 
 	// Release the body frame
