@@ -102,7 +102,7 @@ void UAzureKinectManager::ShutdownAllDevices()
 	KinectDevicesById.Empty();
 }
 
-AzureKinectDevice *UAzureKinectManager::GetDevice(uint32 DeviceId)
+AzureKinectDevice *UAzureKinectManager::GetDevice(int32 DeviceId)
 {
 	AzureKinectDevice **Device = Instance->KinectDevicesById.Find(DeviceId);
 	if (!Device || !(*Device))
@@ -112,4 +112,16 @@ AzureKinectDevice *UAzureKinectManager::GetDevice(uint32 DeviceId)
 	}
 
 	return (*Device);
+}
+
+TArray<UAzureKinectBody*> UAzureKinectManager::GetBodies(int32 DeviceId)
+{
+	AzureKinectDevice *Device = GetDevice(DeviceId);
+	if (!Device)
+	{
+		UE_LOG(AzureKinectLog, Warning, TEXT("Returning empty TArray of UAzureKinectBody"));
+		return TArray<UAzureKinectBody*>();
+	}
+
+	return Device->GetBodies();
 }

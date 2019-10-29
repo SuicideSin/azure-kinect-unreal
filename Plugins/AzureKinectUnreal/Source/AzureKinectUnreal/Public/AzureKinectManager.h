@@ -39,7 +39,10 @@ public:
 	static void ShutdownDevice(int32 DeviceId = 0);
 
 	//UFUNCTION(BlueprintCallable, Category = "Azure Kinect", meta = (DisplayName = "Get Azure Kinect Device"))
-	static AzureKinectDevice* GetDevice(uint32 DeviceId);
+	static AzureKinectDevice* GetDevice(int32 DeviceId);
+
+	UFUNCTION(BlueprintPure, Category = "Azure Kinect", meta = (DisplayName = "Get Bodies for Device"))
+	static TArray<UAzureKinectBody*> GetBodies(int32 DeviceId);
 
 private:
 	static UAzureKinectManager *Instance;
