@@ -65,6 +65,7 @@ bool AzureKinectDevice::Initialize(k4a_depth_mode_t DepthMode)
 
 	bIsInitialized = true;
 
+	InitializeBodies();
 	StartKinectThread();
 
 	return true;
@@ -77,6 +78,12 @@ void AzureKinectDevice::Shutdown()
 		Thread->Shutdown();
 		Thread = nullptr;
 	}
+
+	for (UAzureKinectBody *body : Bodies)
+	{
+		body->RemoveFromRoot();
+	}
+	Bodies.Empty();
 
 	if (NativeBodyTracker)
 	{
@@ -154,7 +161,8 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 		if (bodySkeletonResult != K4A_RESULT_SUCCEEDED)
 		{
 			UE_LOG(AzureKinectDeviceLog, Error, TEXT("Get Body Skeleton Failed!"));
-			break;
+			NativeBodies[i].bIsValid = false;
+			continue;
 		}
 
 		body.id = k4abt_frame_get_body_id(bodyFrame, i);
@@ -163,6 +171,12 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 		{
 			GEngine->AddOnScreenDebugMessage(1, 5.0f, FColor::Cyan, FString::Printf(TEXT("\tBody Id : %d"), body.id));
 		}
+
+		// Cannot modify UObjects in thread
+		//Bodies[i]->UpdateBodyWithKinectInfo(body);
+
+		NativeBodies[i].NativeBody = body;
+		NativeBodies[i].bIsValid = true;
 	}
 
 	// Release the body frame
@@ -172,6 +186,25 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 int32 AzureKinectDevice::GetTimeOutInMilliSecs() const
 {
 	return TimeOutInMilliSecs;
+}
+
+TArray<UAzureKinectBody*> AzureKinectDevice::GetBodies() const
+{
+	return Bodies;
+}
+
+void AzureKinectDevice::InitializeBodies()
+{
+	// reset any allocated memory
+	Bodies.Empty(MaxBodies);
+	Bodies.SetNum(MaxBodies);
+	Bodies.Shrink();
+
+	for (uint32 i = 0; i < MaxBodies; i++)
+	{
+		Bodies[i] = NewObject<UAzureKinectBody>();
+		Bodies[i]->AddToRoot();
+	}
 }
 
 void AzureKinectDevice::StartKinectThread()

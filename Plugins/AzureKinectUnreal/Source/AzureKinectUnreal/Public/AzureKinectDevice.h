@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "k4a/k4a.h"
-#include "k4abt.h"
 #include "AzureKinectThread.h"
+#include "AzureKinectBody.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(AzureKinectDeviceLog, Log, All);
 
@@ -30,6 +30,8 @@ public:
 
 	int32 GetTimeOutInMilliSecs() const;
 
+	TArray<UAzureKinectBody*> GetBodies() const;
+
 private:
 	k4a_device_t NativeKinectDevice;
 	int32 DeviceId;
@@ -41,6 +43,15 @@ private:
 	FAzureKinectThread *Thread;
 
 	bool bIsInitialized;
+
+	TArray<UAzureKinectBody*> Bodies;
+
+	// TODO : Find out how many bodies can be tracked with one Sensor
+	const uint32 MaxBodies = 6;
+
+	AzureKinectBodyWrapper NativeBodies[6];
+
+	void InitializeBodies();
 
 	void StartKinectThread();
 };
