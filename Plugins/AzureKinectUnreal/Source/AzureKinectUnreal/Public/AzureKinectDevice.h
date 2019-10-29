@@ -6,6 +6,7 @@
 #include "k4a/k4a.h"
 #include "AzureKinectThread.h"
 #include "AzureKinectBody.h"
+#include "Delegates/IDelegateInstance.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(AzureKinectDeviceLog, Log, All);
 
@@ -49,9 +50,15 @@ private:
 	// TODO : Find out how many bodies can be tracked with one Sensor
 	const uint32 MaxBodies = 6;
 
+	const float TickInterval = 0.016666666f;
+
 	AzureKinectBodyWrapper NativeBodies[6];
+
+	FDelegateHandle TickHandle;
 
 	void InitializeBodies();
 
 	void StartKinectThread();
+
+	bool OnTick(float DeltaTime);
 };

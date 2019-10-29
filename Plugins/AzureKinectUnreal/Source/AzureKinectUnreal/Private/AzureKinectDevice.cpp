@@ -2,6 +2,7 @@
 
 
 #include "AzureKinectDevice.h"
+#include "Containers/Ticker.h"
 
 DEFINE_LOG_CATEGORY(AzureKinectDeviceLog);
 
@@ -68,6 +69,8 @@ bool AzureKinectDevice::Initialize(k4a_depth_mode_t DepthMode)
 	InitializeBodies();
 	StartKinectThread();
 
+	TickHandle = FTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateRaw(this, &AzureKinectDevice::OnTick), TickInterval);
+
 	return true;
 }
 
@@ -78,6 +81,8 @@ void AzureKinectDevice::Shutdown()
 		Thread->Shutdown();
 		Thread = nullptr;
 	}
+
+	FTicker::GetCoreTicker().RemoveTicker(TickHandle);
 
 	for (UAzureKinectBody *body : Bodies)
 	{
@@ -210,4 +215,21 @@ void AzureKinectDevice::InitializeBodies()
 void AzureKinectDevice::StartKinectThread()
 {
 	Thread = FAzureKinectThread::InitPolling(this);
+}
+
+bool AzureKinectDevice::OnTick(float DeltaTime)
+{
+	UE_LOG(AzureKinectDeviceLog, Log, TEXT("Ticking : %f"), DeltaTime);
+	if (bIsInitialized)
+	{
+		//for (AzureKinectBodyWrapper nativeBody : NativeBodies)
+		for (uint32 i = 0; i < MaxBodies; i++)
+		{
+			if (!NativeBodies[i].bIsValid) continue;
+
+			Bodies[i]->UpdateBodyWithKinectInfo(NativeBodies[i].NativeBody);
+		}
+	}
+
+	return true;
 }
