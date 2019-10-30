@@ -7,6 +7,7 @@ UAzureKinectBody::UAzureKinectBody() :
 	Id(0)
 {
 	Joints.SetNum(JointCount);
+	bIsMirrored = false;
 }
 
 UAzureKinectBody::~UAzureKinectBody()
@@ -36,7 +37,7 @@ void UAzureKinectBody::UpdateBodyWithKinectInfo(const k4abt_body_t &NativeBody)
 
 	for (uint32 i = 0; i < JointCount; i++)
 	{
-		Joints[i].UpdateFromNativeJoint(NativeBody.skeleton.joints[i]);
+		Joints[i].UpdateFromNativeJoint(NativeBody.skeleton.joints[i], bIsMirrored);
 
 		if (GEngine)
 		{

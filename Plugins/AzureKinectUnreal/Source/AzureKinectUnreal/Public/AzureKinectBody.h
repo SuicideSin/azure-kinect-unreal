@@ -19,15 +19,19 @@ struct FAzureKinectJoint
 	UPROPERTY(BlueprintReadOnly, Category = "Azure Kinect|Body|Joints")
 	FRotator Orientation;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Azure Kinect|Body|Joints")
+	float PositionMultiplier = 0.5f;
+
 	FAzureKinectJoint() :
 		Position(FVector::ZeroVector),
 		Orientation(FRotator::ZeroRotator)
 	{
 	}
 
-	void UpdateFromNativeJoint(const k4abt_joint_t &NativeJoint)
+	void UpdateFromNativeJoint(const k4abt_joint_t &NativeJoint, bool IsMirrored = false)
 	{
-		Position.Set(NativeJoint.position.xyz.z * 100.0f, NativeJoint.position.xyz.x * 100.0f, NativeJoint.position.xyz.y * 100.0f);
+		int32 XMultiplier = (IsMirrored ? 1 : -1);
+		Position.Set(NativeJoint.position.xyz.z * PositionMultiplier * XMultiplier, -NativeJoint.position.xyz.x * PositionMultiplier, -NativeJoint.position.xyz.y * PositionMultiplier);
 
 		FQuat JointQuaternion = FQuat(
 			-NativeJoint.orientation.wxyz.z,
@@ -72,6 +76,9 @@ public:
 	FAzureKinectJoint GetJoint(int32 index) const;
 
 	void UpdateBodyWithKinectInfo(const k4abt_body_t &NativeBody);
+
+	UPROPERTY(BlueprintReadWrite, Category = "Azure Kinect|Body")
+	bool bIsMirrored;
 
 private:
 
