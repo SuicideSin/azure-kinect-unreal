@@ -137,8 +137,8 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 	k4a_capture_release(sensorCapture);
 	if (queueCaptureResult != K4A_WAIT_RESULT_SUCCEEDED)
 	{
-		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Adding capture to the Tracker process queue %s!"),
-			(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
+		//UE_LOG(AzureKinectDeviceLog, Error, TEXT("Adding capture to the Tracker process queue %s!"),
+		//	(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
 		return;
 	}
 
@@ -153,7 +153,7 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 
 	// Successfully popped the body tracking result
 	size_t numBodies = k4abt_frame_get_num_bodies(bodyFrame);
-	UE_LOG(AzureKinectDeviceLog, Warning, TEXT("%zu bodies are detected"), numBodies);
+	//UE_LOG(AzureKinectDeviceLog, Warning, TEXT("%zu bodies are detected"), numBodies);
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(0, 5.0f, (numBodies > 0 ? FColor::Cyan : FColor::Red), FString::Printf(TEXT("%zu bodies are detected"), numBodies));
@@ -174,7 +174,7 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(1, 5.0f, FColor::Cyan, FString::Printf(TEXT("\tBody Id : %d"), body.id));
+			GEngine->AddOnScreenDebugMessage(1, 5.0f, FColor::Cyan, FString::Printf(TEXT("  Body Id : %d"), body.id));
 		}
 
 		// Cannot modify UObjects in thread
@@ -219,7 +219,7 @@ void AzureKinectDevice::StartKinectThread()
 
 bool AzureKinectDevice::OnTick(float DeltaTime)
 {
-	UE_LOG(AzureKinectDeviceLog, Log, TEXT("Ticking : %f"), DeltaTime);
+	//UE_LOG(AzureKinectDeviceLog, Log, TEXT("Ticking : %f"), DeltaTime);
 	if (bIsInitialized)
 	{
 		//for (AzureKinectBodyWrapper nativeBody : NativeBodies)
