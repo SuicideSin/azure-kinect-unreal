@@ -44,6 +44,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Azure Kinect", meta = (DisplayName = "Get Bodies for Device"))
 	static TArray<UAzureKinectBody*> GetBodies(int32 DeviceId);
 
+	UFUNCTION(BlueprintPure, Category = "Azure Kinect", meta = (DisplayName = "Get Kinect Body Joint Count"))
+	static int32 GetJointCount();
+
 private:
 	static UAzureKinectManager *Instance;
 	

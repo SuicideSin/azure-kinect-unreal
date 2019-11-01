@@ -125,3 +125,8 @@ TArray<UAzureKinectBody*> UAzureKinectManager::GetBodies(int32 DeviceId)
 
 	return Device->GetBodies();
 }
+
+int32 UAzureKinectManager::GetJointCount()
+{
+	return static_cast<int32>(K4ABT_JOINT_COUNT);
+}
