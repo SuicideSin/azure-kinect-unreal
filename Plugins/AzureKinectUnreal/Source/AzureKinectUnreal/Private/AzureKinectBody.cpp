@@ -7,6 +7,11 @@ UAzureKinectBody::UAzureKinectBody() :
 	Id(0)
 {
 	Joints.SetNum(JointCount);
+	for (uint32 i = 0; i < JointCount; i++)
+	{
+		Joints[i].Index = i;
+	}
+
 	bIsMirrored = false;
 }
 
@@ -41,8 +46,10 @@ void UAzureKinectBody::UpdateBodyWithKinectInfo(const k4abt_body_t &NativeBody)
 
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage((int32)(i + 2), 5.0f, FColor::Cyan, FString::Printf(TEXT("        %d : Pos :(%f, %f, %f)"), 
-				i, Joints[i].Position.X, Joints[i].Position.Y, Joints[i].Position.Z));
+			//GEngine->AddOnScreenDebugMessage((int32)(i + 2), 5.0f, FColor::Cyan, FString::Printf(TEXT("        %d : Pos :(%f, %f, %f)"), 
+			//	i, Joints[i].Position.X, Joints[i].Position.Y, Joints[i].Position.Z));
+			GEngine->AddOnScreenDebugMessage((int32)(i + 2), 5.0f, FColor::Cyan, FString::Printf(TEXT("        %d : Rot :(%f, %f, %f)"), 
+				i, Joints[i].Orientation.Roll, Joints[i].Orientation.Pitch, Joints[i].Orientation.Yaw));
 		}
 	}
 }
