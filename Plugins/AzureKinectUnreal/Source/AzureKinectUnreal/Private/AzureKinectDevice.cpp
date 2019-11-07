@@ -76,6 +76,8 @@ bool AzureKinectDevice::Initialize(k4a_depth_mode_t DepthMode)
 
 void AzureKinectDevice::Shutdown()
 {
+	bIsInitialized = false;
+
 	if (Thread)
 	{
 		Thread->Shutdown();
@@ -198,6 +200,11 @@ TArray<UAzureKinectBody*> AzureKinectDevice::GetBodies() const
 	return Bodies;
 }
 
+bool AzureKinectDevice::IsInitialized() const
+{
+	return bIsInitialized;
+}
+
 void AzureKinectDevice::InitializeBodies()
 {
 	// reset any allocated memory
@@ -225,9 +232,9 @@ bool AzureKinectDevice::OnTick(float DeltaTime)
 		//for (AzureKinectBodyWrapper nativeBody : NativeBodies)
 		for (uint32 i = 0; i < MaxBodies; i++)
 		{
-			if (!NativeBodies[i].bIsValid) continue;
+			//if (!NativeBodies[i].bIsValid) continue;
 
-			Bodies[i]->UpdateBodyWithKinectInfo(NativeBodies[i].NativeBody);
+			Bodies[i]->UpdateBodyWithKinectInfo(NativeBodies[i].NativeBody, NativeBodies[i].bIsValid);
 		}
 	}
 

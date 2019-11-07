@@ -38,6 +38,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Azure Kinect", meta = (DisplayName = "Shutdown Azure Kinect"))
 	static void ShutdownDevice(int32 DeviceId = 0);
 
+	UFUNCTION(BlueprintPure, Category = "Azure Kinect", meta = (DisplayName = "Is Azure Kinect Device Initialized"))
+	static bool IsDeviceInitialized(int32 DeviceId = 0);
+
 	//UFUNCTION(BlueprintCallable, Category = "Azure Kinect", meta = (DisplayName = "Get Azure Kinect Device"))
 	static AzureKinectDevice* GetDevice(int32 DeviceId);
 

@@ -33,6 +33,8 @@ public:
 
 	TArray<UAzureKinectBody*> GetBodies() const;
 
+	bool IsInitialized() const;
+
 private:
 	k4a_device_t NativeKinectDevice;
 	int32 DeviceId;
@@ -48,11 +50,11 @@ private:
 	TArray<UAzureKinectBody*> Bodies;
 
 	// TODO : Find out how many bodies can be tracked with one Sensor
-	const uint32 MaxBodies = 6;
+	const uint32 MaxBodies = 10;
 
 	const float TickInterval = 0.016666666f;
 
-	AzureKinectBodyWrapper NativeBodies[6];
+	AzureKinectBodyWrapper NativeBodies[10];
 
 	FDelegateHandle TickHandle;
 

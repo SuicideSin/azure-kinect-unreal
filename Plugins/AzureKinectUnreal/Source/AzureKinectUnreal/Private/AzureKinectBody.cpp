@@ -13,6 +13,7 @@ UAzureKinectBody::UAzureKinectBody() :
 	}
 
 	bIsMirrored = false;
+	bIsTracked = false;
 }
 
 UAzureKinectBody::~UAzureKinectBody()
@@ -36,9 +37,12 @@ FAzureKinectJoint UAzureKinectBody::GetJoint(int32 index) const
 	return Joints[index];
 }
 
-void UAzureKinectBody::UpdateBodyWithKinectInfo(const k4abt_body_t &NativeBody)
+void UAzureKinectBody::UpdateBodyWithKinectInfo(const k4abt_body_t &NativeBody, bool IsTracked)
 {
 	Id = NativeBody.id;
+	bIsTracked = IsTracked;
+
+	if (!bIsTracked) return;
 
 	for (uint32 i = 0; i < JointCount; i++)
 	{

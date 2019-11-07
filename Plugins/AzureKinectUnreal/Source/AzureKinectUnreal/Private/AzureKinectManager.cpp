@@ -89,6 +89,17 @@ void UAzureKinectManager::ShutdownDevice(int32 DeviceId)
 	//Device->Shutdown();
 }
 
+bool UAzureKinectManager::IsDeviceInitialized(int32 DeviceId)
+{
+	AzureKinectDevice *Device = GetDevice(DeviceId);
+	if (!Device)
+	{
+		return false;
+	}
+
+	return Device->IsInitialized();
+}
+
 void UAzureKinectManager::ShutdownAllDevices()
 {
 	for (TPair<int32, AzureKinectDevice*> kvp : KinectDevicesById)

@@ -166,10 +166,13 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Azure Kinect|Body|Joints")
 	FAzureKinectJoint GetJoint(int32 index) const;
 
-	void UpdateBodyWithKinectInfo(const k4abt_body_t &NativeBody);
+	void UpdateBodyWithKinectInfo(const k4abt_body_t &NativeBody, bool IsTracked);
 
 	UPROPERTY(BlueprintReadWrite, Category = "Azure Kinect|Body")
 	bool bIsMirrored;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Azure Kinect|Body")
+	bool bIsTracked;
 
 private:
 
