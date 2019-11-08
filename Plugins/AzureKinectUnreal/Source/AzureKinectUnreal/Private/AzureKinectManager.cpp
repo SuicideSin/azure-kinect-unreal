@@ -115,6 +115,12 @@ void UAzureKinectManager::ShutdownAllDevices()
 
 AzureKinectDevice *UAzureKinectManager::GetDevice(int32 DeviceId)
 {
+	if (!Instance)
+	{
+		UE_LOG(AzureKinectLog, Error, TEXT("UAzureKinectManager Instance is nullptr"));
+		return nullptr;
+	}
+
 	AzureKinectDevice **Device = Instance->KinectDevicesById.Find(DeviceId);
 	if (!Device || !(*Device))
 	{

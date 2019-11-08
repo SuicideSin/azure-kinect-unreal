@@ -51,12 +51,6 @@ void FAzureKinectThread::Shutdown()
 	}
 }
 
-//bool FAzureKinectThread::IsThreadFinished()
-//{
-//	if (Instance) return Instance->IsFinished();
-//	return true;
-//}
-
 void FAzureKinectThread::EnsureCompletion()
 {
 	Stop();
@@ -85,7 +79,7 @@ uint32 FAzureKinectThread::Run()
 
 	while (StopThreadCounter.GetValue() == 0)
 	{
-		// Do Kinect capture, enqueue, pop body frame stuff
+		// Do the Kinect capture, enqueue, pop body frame stuff
 		KinectDevice->CaptureBodyTrackingFrame();
 
 		// may be don't need this since the Kinect API calls will

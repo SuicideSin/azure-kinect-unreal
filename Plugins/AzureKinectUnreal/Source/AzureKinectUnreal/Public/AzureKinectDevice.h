@@ -11,56 +11,98 @@
 DECLARE_LOG_CATEGORY_EXTERN(AzureKinectDeviceLog, Log, All);
 
 /**
- * 
+ * A representation of an Azure Kinect Device that is used to call the
+ * device specific (K4A) C API for starting & stopping camera sensors,
+ * creating & destroying the body tracker, capturing the body frame etc.
  */
 class AZUREKINECTUNREAL_API AzureKinectDevice
 {
 public:
+	/** Ctor */
 	AzureKinectDevice();
+	/** Ctor that initializes this azure kinect devie with the id and timeout params. */
 	AzureKinectDevice(int32 DeviceId, int32 TimeOut);
+	/** Destructor */
 	~AzureKinectDevice();
 
+	/** Initalizes the Azure kinect device with the given Depth Mode. */
 	bool Initialize(k4a_depth_mode_t DepthMode);
+	/** Shuts down this device */
 	void Shutdown();
 
 	/**
 	 * Captures the device body tracking frame, enqueues the capture, pops the tracker body frame result
-	 * and releases the body frame.
+	 * and releases the body frame. 
+	 * 
+	 * @note This is run on a different thread to improve performance.
 	 */
 	void CaptureBodyTrackingFrame();
 
+	/** The timeout for the API calls in milliseconds. */
 	int32 GetTimeOutInMilliSecs() const;
 
+	/** Returns an array of the tracked bodies by this device. */
 	TArray<UAzureKinectBody*> GetBodies() const;
 
+	/** Whether this device is initialized or not. */
 	bool IsInitialized() const;
 
 private:
+	/** A handle to the native k4a device that is used in starting and stopping camera sensors. */
 	k4a_device_t NativeKinectDevice;
+	/** The Id of this device. Default is 0. */
 	int32 DeviceId;
-	//k4a_calibration_t SensorCalibration;
-
+	/** A handle to the native k4abt body tracker that is used to get the body frame and the skeleton joints data. */
 	k4abt_tracker_t NativeBodyTracker;
+	/** The timeout for the API calls. Default is 0, which means it is non-blocking. */
 	int32 TimeOutInMilliSecs;
 
+	/** A pointer to the thread that does the body capturing. */
 	FAzureKinectThread *Thread;
 
+	/** Whether this device is initialized or not. */
 	bool bIsInitialized;
 
+	/** 
+	 * An array of bodies that are tracked by this device. 
+	 * The bodies in the array are automatically updated with new kinect body joint data.
+	 */
 	TArray<UAzureKinectBody*> Bodies;
 
 	// TODO : Find out how many bodies can be tracked with one Sensor
+	/**
+	 * The max number of bodies that the azure kinect device can track.
+	 * 
+	 * @note This is set to 10 since there is no mention of the max number of bodies 
+	 * that can be tracked by an azure kinect device in the official documentation.
+	 */
 	const uint32 MaxBodies = 10;
 
+	/** The frequency with which the ticker delegate is called. Set to 16 ms = 60 fps. */
 	const float TickInterval = 0.016666666f;
 
+	/**
+	 * An array of k4a bodies that get updated with new kinect body data.
+	 *
+	 * @note The only reason to use this array is because the above 
+	 * UAzureKinectBody array cannot be modified directly in the kinect thread.
+	 * The UObjects/AActors cannot be modified outside of the Game thread.
+	 */
 	AzureKinectBodyWrapper NativeBodies[10];
 
+	/** A delegate handle to start and stop polling. */
 	FDelegateHandle TickHandle;
 
+	/** Initializes the Bodies TArray with correct length/size and default values. */
 	void InitializeBodies();
 
+	/** Initializes the kinect thread. */
 	void StartKinectThread();
 
+	/**
+	 * The polling function that is called by the ticker delegate.
+	 * This updates the UAzureKinectBody in Bodies array with the data
+	 * from the NativeBodies array.
+	 */
 	bool OnTick(float DeltaTime);
 };

@@ -5,7 +5,7 @@
 /**
  * Blueprintable enum defined based on k4a_depth_mode_t from k4atypes.h
  *
- * @remarks This should always have the same enum values as k4a_depth_mode_t
+ * @note This should always have the same enum values as k4a_depth_mode_t
  */
 UENUM(BlueprintType, Category = "Azure Kinect|Enums")
 enum class EKinectDepthMode : uint8
@@ -21,7 +21,7 @@ enum class EKinectDepthMode : uint8
 /**
  * Blueprintable enum defined based on k4abt_joint_id_t from k4abttypes.h
  *
- * @remarks This should always have the same enum values as k4abt_joint_id_t
+ * @note This should always have the same enum values as k4abt_joint_id_t
  */
 UENUM(BlueprintType, Category = "Azure Kinect|Enums")
 enum class EKinectBodyJointId : uint8
