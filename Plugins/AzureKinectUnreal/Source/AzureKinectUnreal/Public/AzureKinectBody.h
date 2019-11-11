@@ -80,44 +80,21 @@ struct FAzureKinectJoint
 		// 
 		if (Index <= JOINT_ID(NECK) 
 			|| (Index >= JOINT_ID(HEAD) && Index <= JOINT_ID(EAR_RIGHT))
-			|| (Index >= JOINT_ID(HIP_LEFT) && Index <= JOINT_ID(FOOT_LEFT)))
+			|| (Index >= JOINT_ID(HIP_LEFT) && Index <= JOINT_ID(FOOT_LEFT))
+			|| (Index >= JOINT_ID(HIP_RIGHT) && Index <= JOINT_ID(FOOT_RIGHT)))
 		{
 			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), -JointQuaternion.GetAxisX())
 				.Rotator();
 
 			//Orientation = JointQuaternion.Rotator();
 		}
-		else if (Index >= JOINT_ID(HIP_RIGHT) && Index <= JOINT_ID(FOOT_RIGHT))
-		{
-			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), -JointQuaternion.GetAxisX())
-				.Rotator();
-		}
-		else if (Index == JOINT_ID(SHOULDER_LEFT))
+		else if (Index == JOINT_ID(SHOULDER_LEFT) || Index == JOINT_ID(SHOULDER_RIGHT))
 		{
 			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), JointQuaternion.GetAxisZ())
 				.Rotator();
 		}
-		else if (Index == JOINT_ID(ELBOW_LEFT))
-		{
-			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), -JointQuaternion.GetAxisZ())
-				.Rotator();
-		}
-		else if (Index == JOINT_ID(WRIST_LEFT))
-		{
-			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY() , -JointQuaternion.GetAxisZ())
-				.Rotator();
-		}
-		else if (Index == JOINT_ID(SHOULDER_RIGHT))
-		{
-			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), JointQuaternion.GetAxisZ())
-				.Rotator();
-		}
-		else if (Index == JOINT_ID(ELBOW_RIGHT))
-		{
-			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), -JointQuaternion.GetAxisZ())
-				.Rotator();
-		}
-		else if (Index == JOINT_ID(WRIST_RIGHT))
+		else if (Index == JOINT_ID(ELBOW_LEFT) || Index == JOINT_ID(WRIST_LEFT)
+			|| Index == JOINT_ID(ELBOW_RIGHT) || Index == JOINT_ID(WRIST_RIGHT))
 		{
 			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), -JointQuaternion.GetAxisZ())
 				.Rotator();
