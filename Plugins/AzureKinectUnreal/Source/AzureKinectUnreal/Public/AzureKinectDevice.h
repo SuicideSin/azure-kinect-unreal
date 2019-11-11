@@ -72,14 +72,6 @@ private:
 	/** The frequency with which the ticker delegate is called. Set to 16 ms = 60 fps. */
 	const float TickInterval = 0.016666666f;
 
-	/**
-	 * An array of k4a bodies that get updated with new kinect body data.
-	 *
-	 * @note The only reason to use this array is because the above 
-	 * UAzureKinectBody array cannot be modified directly in the kinect thread.
-	 * The UObjects/AActors cannot be modified outside of the Game thread.
-	 */
-	AzureKinectBodyWrapper NativeBodies[MaxBodies];
 
 	/** A delegate handle to start and stop polling. */
 	FDelegateHandle TickHandle;

@@ -45,7 +45,10 @@ struct FAzureKinectJoint
 	/** Update the joint's position and rotation from the kinect joint data. */
 	void UpdateFromNativeJoint(const k4abt_joint_t &NativeJoint, bool IsMirrored = false)
 	{
-		int32 XMultiplier = 1;	// (IsMirrored ? 1 : -1);
+		// Only for position mirroring. Doesn't work for UE4 Mannequin since
+		// we only use the Orientation in the mannequin anim BP.
+		int32 MirrorMultiplier = (IsMirrored ? -1 : 1);
+
 		/** 
 		 * Convert Azure Kinect Depth and Color camera co-ordinate system
 		 * to Unreal co-ordinate system
@@ -57,7 +60,7 @@ struct FAzureKinectJoint
 		 * +ve Y-axis		Down		-ve Z-axis
 		 * +ve Z-axis		Forward		+ve X-axis
 		 */
-		Position.Set(NativeJoint.position.xyz.z * PositionMultiplier * XMultiplier, NativeJoint.position.xyz.x * PositionMultiplier, -NativeJoint.position.xyz.y * PositionMultiplier);
+		Position.Set(NativeJoint.position.xyz.z * PositionMultiplier, NativeJoint.position.xyz.x * PositionMultiplier * MirrorMultiplier, -NativeJoint.position.xyz.y * PositionMultiplier);
 
 		/**
 		 * Convert the Orientation from Kinect co-ordinate system to Unreal co-ordinate system.
@@ -104,20 +107,6 @@ struct FAzureKinectJoint
 	}
 };
 
-/** 
- * A wrapper to the k4abt body
- */
-struct AzureKinectBodyWrapper
-{
-	k4abt_body_t NativeBody;
-
-	bool bIsValid;
-	
-	AzureKinectBodyWrapper() :
-		bIsValid(false)
-	{
-	}
-};
 
 /**
  * A representation of the Azure Kinect Body that contains Joints.
@@ -145,13 +134,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Azure Kinect|Body|Joints")
 	FAzureKinectJoint GetJoint(int32 index) const;
 
-	/**
-	 * Updates this body with the Kinect body data.
-	 * 
-	 * @param NativeBody A reference to the k4abt body handle.
-	 * @param IsTracked Whether this body is currently being tracked or not.
-	 */
-	void UpdateBodyWithKinectInfo(const k4abt_body_t &NativeBody, bool IsTracked);
+	/** Updates this body with the Kinect body data. */
+	void UpdateBodyWithKinectInfo();
 
 	/** Whether to mirror the joints. */
 	UPROPERTY(BlueprintReadWrite, Category = "Azure Kinect|Body")
@@ -160,6 +144,9 @@ public:
 	/** Whether this body is tracked or not. */
 	UPROPERTY(BlueprintReadOnly, Category = "Azure Kinect|Body")
 	bool bIsTracked;
+
+	/** A reference to the native k4abt body handle. */
+	k4abt_body_t NativeBody;
 
 private:
 	/** The Id of the body for a particular person index. */

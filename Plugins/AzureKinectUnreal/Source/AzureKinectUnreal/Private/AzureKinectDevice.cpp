@@ -168,7 +168,7 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 		if (bodySkeletonResult != K4A_RESULT_SUCCEEDED)
 		{
 			UE_LOG(AzureKinectDeviceLog, Error, TEXT("Get Body Skeleton Failed!"));
-			NativeBodies[i].bIsValid = false;
+			Bodies[i]->bIsTracked = false;
 			continue;
 		}
 
@@ -182,8 +182,8 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 		// Cannot modify UObjects in thread
 		//Bodies[i]->UpdateBodyWithKinectInfo(body);
 
-		NativeBodies[i].NativeBody = body;
-		NativeBodies[i].bIsValid = true;
+		Bodies[i]->NativeBody = body;
+		Bodies[i]->bIsTracked = true;
 	}
 
 	// Release the body frame
@@ -234,7 +234,7 @@ bool AzureKinectDevice::OnTick(float DeltaTime)
 		{
 			//if (!NativeBodies[i].bIsValid) continue;
 
-			Bodies[i]->UpdateBodyWithKinectInfo(NativeBodies[i].NativeBody, NativeBodies[i].bIsValid);
+			Bodies[i]->UpdateBodyWithKinectInfo();
 		}
 	}
 

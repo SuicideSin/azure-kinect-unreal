@@ -37,10 +37,9 @@ FAzureKinectJoint UAzureKinectBody::GetJoint(int32 index) const
 	return Joints[index];
 }
 
-void UAzureKinectBody::UpdateBodyWithKinectInfo(const k4abt_body_t &NativeBody, bool IsTracked)
+void UAzureKinectBody::UpdateBodyWithKinectInfo()
 {
 	Id = NativeBody.id;
-	bIsTracked = IsTracked;
 
 	if (!bIsTracked) return;
 
