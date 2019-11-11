@@ -74,19 +74,19 @@ uint32 FAzureKinectThread::Run()
 		return 1;
 	}
 
-	const float UpdateInterval = FMath::Max(0.0f, (KinectDevice->GetTimeOutInMilliSecs() / 1000.0f));
-	UE_LOG(AzureKinectThreadLog, Log, TEXT("Azure Kinect thread running with interval : %d"), UpdateInterval);
+	const float UpdateIntervalInSecs = FMath::Max(0.0f, (KinectDevice->GetTimeOutInMilliSecs() * 0.001f));
+	UE_LOG(AzureKinectThreadLog, Log, TEXT("Azure Kinect thread running with interval in secs : %f"), UpdateIntervalInSecs);
 
 	while (StopThreadCounter.GetValue() == 0)
 	{
 		// Do the Kinect capture, enqueue, pop body frame stuff
 		KinectDevice->CaptureBodyTrackingFrame();
 
-		// may be don't need this since the Kinect API calls will
-		// be blocking if the Timeout is non-zero.
-		//if (UpdateInterval > 0.0f)
+		// May be don't need this since the Kinect API calls will
+		// be blocking calls if the Timeout is non-zero.
+		//if (UpdateIntervalInSecs > 0.0f)
 		//{
-		//	FPlatformProcess::Sleep(UpdateInterval);
+		//	FPlatformProcess::Sleep(UpdateIntervalInSecs);
 		//}
 	}
 

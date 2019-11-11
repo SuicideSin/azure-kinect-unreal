@@ -85,7 +85,7 @@ void UAzureKinectManager::ShutdownDevice(int32 DeviceId)
 	//	UE_LOG(AzureKinectLog, Error, TEXT("Kinect device (id : %d) was not initialized to be shutdown"), DeviceId);
 	//	return;
 	//}
-
+	//
 	//Device->Shutdown();
 }
 

@@ -12,6 +12,7 @@ DECLARE_LOG_CATEGORY_EXTERN(AzureKinectThreadLog, Log, All);
 
 /**
  * A thread that is used to process the Azure Kinect's body frame capture.
+ * @see https://wiki.unrealengine.com/Multi-Threading:_How_to_Create_Threads_in_UE4
  */
 class AZUREKINECTUNREAL_API FAzureKinectThread : public FRunnable
 {

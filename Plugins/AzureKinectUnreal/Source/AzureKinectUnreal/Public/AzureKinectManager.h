@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include <AzureKinectEnums.h>
-#include <AzureKinectDevice.h>
+#include "AzureKinectEnums.h"
+#include "AzureKinectDevice.h"
 #include "AzureKinectManager.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(AzureKinectLog, Log, All);

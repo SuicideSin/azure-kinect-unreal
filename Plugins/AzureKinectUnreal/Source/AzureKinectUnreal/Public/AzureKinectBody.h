@@ -60,7 +60,9 @@ struct FAzureKinectJoint
 		 * +ve Y-axis		Down		-ve Z-axis
 		 * +ve Z-axis		Forward		+ve X-axis
 		 */
-		Position.Set(NativeJoint.position.xyz.z * PositionMultiplier, NativeJoint.position.xyz.x * PositionMultiplier * MirrorMultiplier, -NativeJoint.position.xyz.y * PositionMultiplier);
+		Position.Set(NativeJoint.position.xyz.z * PositionMultiplier, 
+			NativeJoint.position.xyz.x * PositionMultiplier * MirrorMultiplier, 
+			-NativeJoint.position.xyz.y * PositionMultiplier);
 
 		/**
 		 * Convert the Orientation from Kinect co-ordinate system to Unreal co-ordinate system.
@@ -77,10 +79,18 @@ struct FAzureKinectJoint
 		 * Map the Azure Kinect joint orientation to Unreal Mannequin.
 		 * @see https://docs.microsoft.com/en-us/azure/kinect-dk/body-joints
 		 * 
+		 * The pelvis, spine, chest, legs, neck and head joints extend along X-axis which is
+		 * along the Z-axis in UE4 and the joints forward axis (Y-axis) is along the X-axis in UE4.
+		 *
+		 * The shoulder joints extend along X-axis, their forward axis (Y-axis) is along the
+		 * X-axis in UE4 and their up axis (Z-axis) is along Z-axis in UE4.
+		 *
+		 * The elbow joints are similar to the shoulders, but the same mapping didn't work for them.
+		 * 
+		 * The wrist joints are a bit tricky and I couldn't get them to work correctly.
 		 */
 #define JOINT_ID(Name) static_cast<uint8>(EKinectBodyJointId::K4ABT_JOINT_##Name)
 
-		// 
 		if (Index <= JOINT_ID(NECK) 
 			|| (Index >= JOINT_ID(HEAD) && Index <= JOINT_ID(EAR_RIGHT))
 			|| (Index >= JOINT_ID(HIP_LEFT) && Index <= JOINT_ID(FOOT_LEFT))

@@ -12,9 +12,9 @@ AzureKinectDevice::AzureKinectDevice() :
 }
 
 AzureKinectDevice::AzureKinectDevice(int32 Id, int32 TimeOut) :
-	NativeKinectDevice(nullptr),	//NULL
+	NativeKinectDevice(nullptr),
 	DeviceId(Id),
-	NativeBodyTracker(nullptr),	//NULL
+	NativeBodyTracker(nullptr),
 	TimeOutInMilliSecs(TimeOut),
 	Thread(nullptr),
 	bIsInitialized(false)
@@ -179,9 +179,6 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 			GEngine->AddOnScreenDebugMessage(1, 5.0f, FColor::Cyan, FString::Printf(TEXT("  Body Id : %d"), body.id));
 		}
 
-		// Cannot modify UObjects in thread
-		//Bodies[i]->UpdateBodyWithKinectInfo(body);
-
 		Bodies[i]->NativeBody = body;
 		Bodies[i]->bIsTracked = true;
 	}
@@ -229,12 +226,10 @@ bool AzureKinectDevice::OnTick(float DeltaTime)
 	//UE_LOG(AzureKinectDeviceLog, Log, TEXT("Ticking : %f"), DeltaTime);
 	if (bIsInitialized)
 	{
-		//for (AzureKinectBodyWrapper nativeBody : NativeBodies)
-		for (uint32 i = 0; i < MaxBodies; i++)
+		//for (uint32 i = 0; i < MaxBodies; i++)
+		for (UAzureKinectBody *Body : Bodies)
 		{
-			//if (!NativeBodies[i].bIsValid) continue;
-
-			Bodies[i]->UpdateBodyWithKinectInfo();
+			Body->UpdateBodyWithKinectInfo();
 		}
 	}
 

@@ -72,7 +72,6 @@ private:
 	/** The frequency with which the ticker delegate is called. Set to 16 ms = 60 fps. */
 	const float TickInterval = 0.016666666f;
 
-
 	/** A delegate handle to start and stop polling. */
 	FDelegateHandle TickHandle;
 
@@ -85,7 +84,7 @@ private:
 	/**
 	 * The polling function that is called by the ticker delegate.
 	 * This updates the UAzureKinectBody in Bodies array with the data
-	 * from the NativeBodies array.
+	 * from the Kinect Body.
 	 */
 	bool OnTick(float DeltaTime);
 };
