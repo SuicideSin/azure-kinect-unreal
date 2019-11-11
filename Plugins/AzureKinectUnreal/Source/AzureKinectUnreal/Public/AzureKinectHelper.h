@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AzureKinectEnums.generated.h"
+#include "AzureKinectHelper.generated.h"
 
 /**
  * Blueprintable enum defined based on k4a_depth_mode_t from k4atypes.h
