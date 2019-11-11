@@ -47,6 +47,8 @@ public:
 	/** Whether this device is initialized or not. */
 	bool IsInitialized() const;
 
+	void ToggleShowLogsAndOnScreenMsgs(bool ShouldShowLogs, bool ShouldShowOnScreenMsgs);
+
 private:
 	/** A handle to the native k4a device that is used in starting and stopping camera sensors. */
 	k4a_device_t NativeKinectDevice;
@@ -87,4 +89,8 @@ private:
 	 * from the Kinect Body.
 	 */
 	bool OnTick(float DeltaTime);
+
+	/** For debugging only */
+	bool bShowAllLogs;
+	bool bShowOnScreenMsgs;
 };

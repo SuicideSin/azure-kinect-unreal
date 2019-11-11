@@ -47,12 +47,12 @@ void UAzureKinectBody::UpdateBodyWithKinectInfo()
 	{
 		Joints[i].UpdateFromNativeJoint(NativeBody.skeleton.joints[i], bIsMirrored);
 
-		if (GEngine)
-		{
-			//GEngine->AddOnScreenDebugMessage((int32)(i + 2), 5.0f, FColor::Cyan, FString::Printf(TEXT("        %d : Pos :(%f, %f, %f)"), 
-			//	i, Joints[i].Position.X, Joints[i].Position.Y, Joints[i].Position.Z));
-			GEngine->AddOnScreenDebugMessage((int32)(i + 2), 5.0f, FColor::Cyan, FString::Printf(TEXT("        %d : Rot :(%f, %f, %f)"), 
-				i, Joints[i].Orientation.Roll, Joints[i].Orientation.Pitch, Joints[i].Orientation.Yaw));
-		}
+		//if (GEngine)
+		//{
+		//	//GEngine->AddOnScreenDebugMessage((int32)(i + 2), 5.0f, FColor::Cyan, FString::Printf(TEXT("        %d : Pos :(%f, %f, %f)"), 
+		//	//	i, Joints[i].Position.X, Joints[i].Position.Y, Joints[i].Position.Z));
+		//	GEngine->AddOnScreenDebugMessage((int32)(i + 2), 5.0f, FColor::Cyan, FString::Printf(TEXT("        %d : Rot :(%f, %f, %f)"), 
+		//		i, Joints[i].Orientation.Roll, Joints[i].Orientation.Pitch, Joints[i].Orientation.Yaw));
+		//}
 	}
 }

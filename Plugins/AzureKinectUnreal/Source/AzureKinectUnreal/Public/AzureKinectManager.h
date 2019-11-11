@@ -54,6 +54,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Azure Kinect", meta = (DisplayName = "Get Kinect Body Joint Count"))
 	static int32 GetJointCount();
 
+	UFUNCTION(BlueprintCallable, Category = "Azure Kinect", meta = (DisplayName = "Toggle Kinect Device Logging"))
+	static void ToggleDeviceLogging(int32 DeviceId, bool ShouldShowLogs, bool ShouldShowOnScreenMsgs);
+
 private:
 	/** A singleton instance. */
 	static UAzureKinectManager *Instance;

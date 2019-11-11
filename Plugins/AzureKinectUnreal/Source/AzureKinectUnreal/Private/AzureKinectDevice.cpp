@@ -17,7 +17,9 @@ AzureKinectDevice::AzureKinectDevice(int32 Id, int32 TimeOut) :
 	NativeBodyTracker(nullptr),
 	TimeOutInMilliSecs(TimeOut),
 	Thread(nullptr),
-	bIsInitialized(false)
+	bIsInitialized(false),
+	bShowAllLogs(false),
+	bShowOnScreenMsgs(false)
 {
 }
 
@@ -111,6 +113,12 @@ void AzureKinectDevice::Shutdown()
 
 void AzureKinectDevice::CaptureBodyTrackingFrame()
 {
+	if (!bIsInitialized)
+	{
+		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Kinect device for capturing body tracking frame is Not Initialized!"));
+		return;
+	}
+
 	if (!NativeKinectDevice)
 	{
 		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Kinect device for capturing body tracking frame is Invalid!"));
@@ -124,11 +132,11 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 	}
 
 	// Capture a depth frame
-	k4a_capture_t sensorCapture = NULL;
+	k4a_capture_t sensorCapture = nullptr;
 	k4a_wait_result_t getCaptureResult = k4a_device_get_capture(NativeKinectDevice, &sensorCapture, TimeOutInMilliSecs);
 	if (getCaptureResult != K4A_WAIT_RESULT_SUCCEEDED)
 	{
-		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Kinect device get capture %s!"),
+		UE_CLOG(bShowAllLogs, AzureKinectDeviceLog, Error, TEXT("Kinect device get capture %s!"),
 			(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
 		return;
 	}
@@ -139,24 +147,24 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 	k4a_capture_release(sensorCapture);
 	if (queueCaptureResult != K4A_WAIT_RESULT_SUCCEEDED)
 	{
-		//UE_LOG(AzureKinectDeviceLog, Error, TEXT("Adding capture to the Tracker process queue %s!"),
-		//	(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
+		UE_CLOG(bShowAllLogs, AzureKinectDeviceLog, Error, TEXT("Adding capture to the Tracker process queue %s!"),
+			(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
 		return;
 	}
 
-	k4abt_frame_t bodyFrame = NULL;
+	k4abt_frame_t bodyFrame = nullptr;
 	k4a_wait_result_t popFrameResult = k4abt_tracker_pop_result(NativeBodyTracker, &bodyFrame, TimeOutInMilliSecs);
 	if (popFrameResult != K4A_WAIT_RESULT_SUCCEEDED)
 	{
-		UE_LOG(AzureKinectDeviceLog, Error, TEXT("Tracker pop body frame result %s!"),
+		UE_CLOG(bShowAllLogs, AzureKinectDeviceLog, Error, TEXT("Tracker pop body frame result %s!"),
 			(getCaptureResult == K4A_WAIT_RESULT_FAILED ? TEXT("Failed") : TEXT("Timed Out")));
 		return;
 	}
 
 	// Successfully popped the body tracking result
 	size_t numBodies = k4abt_frame_get_num_bodies(bodyFrame);
-	//UE_LOG(AzureKinectDeviceLog, Warning, TEXT("%zu bodies are detected"), numBodies);
-	if (GEngine)
+	//UE_CLOG(bShowAllLogs, AzureKinectDeviceLog, Warning, TEXT("%zu bodies are detected"), numBodies);
+	if (GEngine && bShowOnScreenMsgs)
 	{
 		GEngine->AddOnScreenDebugMessage(0, 5.0f, (numBodies > 0 ? FColor::Cyan : FColor::Red), FString::Printf(TEXT("%zu bodies are detected"), numBodies));
 	}
@@ -167,14 +175,14 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 		k4a_result_t bodySkeletonResult = k4abt_frame_get_body_skeleton(bodyFrame, i, &body.skeleton);
 		if (bodySkeletonResult != K4A_RESULT_SUCCEEDED)
 		{
-			UE_LOG(AzureKinectDeviceLog, Error, TEXT("Get Body Skeleton Failed!"));
+			UE_CLOG(bShowAllLogs, AzureKinectDeviceLog, Error, TEXT("Get Body Skeleton Failed!"));
 			Bodies[i]->bIsTracked = false;
 			continue;
 		}
 
 		body.id = k4abt_frame_get_body_id(bodyFrame, i);
 
-		if (GEngine)
+		if (GEngine && bShowOnScreenMsgs)
 		{
 			GEngine->AddOnScreenDebugMessage(1, 5.0f, FColor::Cyan, FString::Printf(TEXT("  Body Id : %d"), body.id));
 		}
@@ -234,4 +242,10 @@ bool AzureKinectDevice::OnTick(float DeltaTime)
 	}
 
 	return true;
+}
+
+void AzureKinectDevice::ToggleShowLogsAndOnScreenMsgs(bool ShouldShowLogs, bool ShouldShowOnScreenMsgs)
+{
+	bShowAllLogs = ShouldShowLogs;
+	bShowOnScreenMsgs = ShouldShowOnScreenMsgs;
 }

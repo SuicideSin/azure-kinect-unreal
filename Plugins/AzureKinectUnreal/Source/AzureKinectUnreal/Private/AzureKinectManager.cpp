@@ -147,3 +147,12 @@ int32 UAzureKinectManager::GetJointCount()
 {
 	return static_cast<int32>(JointCount);
 }
+
+void UAzureKinectManager::ToggleDeviceLogging(int32 DeviceId, bool ShouldShowLogs, bool ShouldShowOnScreenMsgs)
+{
+	AzureKinectDevice *Device = GetDevice(DeviceId);
+	if (Device)
+	{
+		Device->ToggleShowLogsAndOnScreenMsgs(ShouldShowLogs, ShouldShowOnScreenMsgs);
+	}
+}
