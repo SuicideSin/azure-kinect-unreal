@@ -89,7 +89,7 @@ struct FAzureKinectJoint
 		 * 
 		 * The wrist joints are a bit tricky and I couldn't get them to work correctly.
 		 */
-#define JOINT_ID(Name) static_cast<uint8>(EKinectBodyJointId::K4ABT_JOINT_##Name)
+#define JOINT_ID(Name) static_cast<uint8>(EKinectBodyJointId::Name)
 
 		if (Index <= JOINT_ID(NECK) 
 			|| (Index >= JOINT_ID(HEAD) && Index <= JOINT_ID(EAR_RIGHT))
