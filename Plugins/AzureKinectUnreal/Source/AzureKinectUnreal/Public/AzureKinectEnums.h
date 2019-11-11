@@ -54,3 +54,17 @@ enum class EKinectBodyJointId : uint8
 	K4ABT_JOINT_EAR_RIGHT UMETA(DisplayName = "Ear Right"),
 	K4ABT_JOINT_COUNT UMETA(DisplayName = "COUNT"),
 };
+
+
+// TODO : Find out how many bodies can be tracked with one Sensor
+/**
+ * The max number of bodies that the azure kinect device can track.
+ *
+ * @note This is set to 10 since there is no mention of the max number of bodies
+ * that can be tracked by an azure kinect device in the official documentation.
+ */
+const uint32 MaxBodies = 10;
+
+
+/** The total joint count. */
+const uint32 JointCount = static_cast<uint32>(EKinectBodyJointId::K4ABT_JOINT_COUNT);

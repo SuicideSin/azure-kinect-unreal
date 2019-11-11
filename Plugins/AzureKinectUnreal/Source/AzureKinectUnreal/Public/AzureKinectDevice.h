@@ -69,15 +69,6 @@ private:
 	 */
 	TArray<UAzureKinectBody*> Bodies;
 
-	// TODO : Find out how many bodies can be tracked with one Sensor
-	/**
-	 * The max number of bodies that the azure kinect device can track.
-	 * 
-	 * @note This is set to 10 since there is no mention of the max number of bodies 
-	 * that can be tracked by an azure kinect device in the official documentation.
-	 */
-	const uint32 MaxBodies = 10;
-
 	/** The frequency with which the ticker delegate is called. Set to 16 ms = 60 fps. */
 	const float TickInterval = 0.016666666f;
 
@@ -88,7 +79,7 @@ private:
 	 * UAzureKinectBody array cannot be modified directly in the kinect thread.
 	 * The UObjects/AActors cannot be modified outside of the Game thread.
 	 */
-	AzureKinectBodyWrapper NativeBodies[10];
+	AzureKinectBodyWrapper NativeBodies[MaxBodies];
 
 	/** A delegate handle to start and stop polling. */
 	FDelegateHandle TickHandle;

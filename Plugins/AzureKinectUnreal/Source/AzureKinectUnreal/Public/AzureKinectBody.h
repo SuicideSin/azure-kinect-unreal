@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "k4abt.h"
+#include "AzureKinectEnums.h"
 #include "AzureKinectBody.generated.h"
 
 /**
@@ -74,91 +75,52 @@ struct FAzureKinectJoint
 		 * @see https://docs.microsoft.com/en-us/azure/kinect-dk/body-joints
 		 * 
 		 */
-#define JOINT_ID(Name) static_cast<uint8>(k4abt_joint_id_t::Name)
+#define JOINT_ID(Name) static_cast<uint8>(EKinectBodyJointId::K4ABT_JOINT_##Name)
 
 		// 
-		if (Index <= JOINT_ID(K4ABT_JOINT_NECK) 
-			|| (Index >= JOINT_ID(K4ABT_JOINT_HEAD) && Index <= JOINT_ID(K4ABT_JOINT_EAR_RIGHT))
-			|| (Index >= JOINT_ID(K4ABT_JOINT_HIP_LEFT) && Index <= JOINT_ID(K4ABT_JOINT_FOOT_LEFT)))
+		if (Index <= JOINT_ID(NECK) 
+			|| (Index >= JOINT_ID(HEAD) && Index <= JOINT_ID(EAR_RIGHT))
+			|| (Index >= JOINT_ID(HIP_LEFT) && Index <= JOINT_ID(FOOT_LEFT)))
 		{
 			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), -JointQuaternion.GetAxisX())
 				.Rotator();
 
 			//Orientation = JointQuaternion.Rotator();
 		}
-		//else if (Index >= JOINT_ID(K4ABT_JOINT_HIP_LEFT) && Index <= JOINT_ID(K4ABT_JOINT_FOOT_RIGHT))
-		//{
-		//	Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), JointQuaternion.GetAxisZ())
-		//		.Rotator();
-		//}
-		else if (Index >= JOINT_ID(K4ABT_JOINT_HIP_RIGHT) && Index <= JOINT_ID(K4ABT_JOINT_FOOT_RIGHT))
+		else if (Index >= JOINT_ID(HIP_RIGHT) && Index <= JOINT_ID(FOOT_RIGHT))
 		{
 			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), -JointQuaternion.GetAxisX())
 				.Rotator();
 		}
-		//else if (Index == JOINT_ID(K4ABT_JOINT_CLAVICLE_LEFT))	// || Index == JOINT_ID(K4ABT_JOINT_SHOULDER_LEFT))
-		//{
-		//	Orientation = FRotationMatrix::MakeFromXZ(-JointQuaternion.GetAxisX(), JointQuaternion.GetAxisZ())
-		//		.Rotator();
-
-		//	//Orientation = JointQuaternion.Rotator();
-		//}
-		else if (Index == JOINT_ID(K4ABT_JOINT_SHOULDER_LEFT))	// || Index == JOINT_ID(K4ABT_JOINT_ELBOW_LEFT))
+		else if (Index == JOINT_ID(SHOULDER_LEFT))
 		{
-			//Orientation = FRotationMatrix::MakeFromYZ(-JointQuaternion.GetAxisX(), JointQuaternion.GetAxisZ())
-			//	.Rotator();
-
 			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), JointQuaternion.GetAxisZ())
 				.Rotator();
 		}
-		else if (Index == JOINT_ID(K4ABT_JOINT_ELBOW_LEFT))
+		else if (Index == JOINT_ID(ELBOW_LEFT))
 		{
 			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), -JointQuaternion.GetAxisZ())
 				.Rotator();
-
-			//Orientation = FRotationMatrix::MakeFromYZ(JointQuaternion.GetAxisX(), -JointQuaternion.GetAxisZ())
-			//	.Rotator();
-
-			//Orientation = JointQuaternion.Rotator();
-
 		}
-		else if (Index == JOINT_ID(K4ABT_JOINT_WRIST_LEFT))
+		else if (Index == JOINT_ID(WRIST_LEFT))
 		{
-			//Orientation = FRotationMatrix::MakeFromYZ(JointQuaternion.GetAxisX(), -JointQuaternion.GetAxisZ())
-			//	.Rotator();
-
 			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY() , -JointQuaternion.GetAxisZ())
 				.Rotator();
-
-			//Orientation = JointQuaternion.Rotator();
 		}
-		//else if (Index == JOINT_ID(K4ABT_JOINT_CLAVICLE_RIGHT))	// || Index == JOINT_ID(K4ABT_JOINT_SHOULDER_RIGHT))
-		//{
-		//	Orientation = FRotationMatrix::MakeFromXZ(-JointQuaternion.GetAxisX(), JointQuaternion.GetAxisZ())
-		//		.Rotator();
-		//}
-		else if (Index == JOINT_ID(K4ABT_JOINT_SHOULDER_RIGHT))	// || Index == JOINT_ID(K4ABT_JOINT_ELBOW_RIGHT))
+		else if (Index == JOINT_ID(SHOULDER_RIGHT))
 		{
-			//Orientation = FRotationMatrix::MakeFromYZ(JointQuaternion.GetAxisX(), JointQuaternion.GetAxisZ())
-			//	.Rotator();
-
 			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), JointQuaternion.GetAxisZ())
 				.Rotator();
 		}
-		else if (Index == JOINT_ID(K4ABT_JOINT_ELBOW_RIGHT))
+		else if (Index == JOINT_ID(ELBOW_RIGHT))
 		{
 			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), -JointQuaternion.GetAxisZ())
 				.Rotator();
 		}
-		else if (Index == JOINT_ID(K4ABT_JOINT_WRIST_RIGHT))
+		else if (Index == JOINT_ID(WRIST_RIGHT))
 		{
-			//Orientation = FRotationMatrix::MakeFromYZ(JointQuaternion.GetAxisX(), -JointQuaternion.GetAxisZ())
-			//	.Rotator();
-
 			Orientation = FRotationMatrix::MakeFromXZ(JointQuaternion.GetAxisY(), -JointQuaternion.GetAxisZ())
 				.Rotator();
-
-			//Orientation = JointQuaternion.Rotator();
 		}
 
 #undef JOINT_ID
@@ -229,7 +191,4 @@ private:
 	/** Array of joints contained in this body. */
 	UPROPERTY()
 	TArray<FAzureKinectJoint> Joints;
-
-	/** The total joint count. */
-	const uint32 JointCount = K4ABT_JOINT_COUNT;
 };
