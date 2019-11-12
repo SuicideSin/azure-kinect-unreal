@@ -48,3 +48,10 @@ _Another thing that can be done instead of copying the below dll files to `Unrea
  - cublas64_100.dll
 ```
 Reference : [Azure Kinect SDK - Issue 709](https://github.com/microsoft/Azure-Kinect-Sensor-SDK/issues/709#issuecomment-545121230)
+
+
+### Disclaimer
+
+ - The plugin has not been thoroughly tested with one connected Azure Kinect device for tracking multiple bodies although the plugin supports it.
+
+ - The plugin has **not at all been tested** with multiple Azure Kinect Devices connected to one PC.
