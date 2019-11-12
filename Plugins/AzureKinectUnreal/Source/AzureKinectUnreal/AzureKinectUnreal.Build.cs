@@ -75,5 +75,10 @@ public class AzureKinectUnreal : ModuleRules
 				"k4a.lib",
 				"k4abt.lib"
 			});
+
+		// Ensure that the DLLs are staged along with the executable
+		RuntimeDependencies.Add("$(PluginDir)/Binaries/Win64/k4a.dll");
+		RuntimeDependencies.Add("$(PluginDir)/Binaries/Win64/k4abt.dll");
+		RuntimeDependencies.Add("$(PluginDir)/Binaries/Win64/depthengine_2_0.dll");
 	}
 }
