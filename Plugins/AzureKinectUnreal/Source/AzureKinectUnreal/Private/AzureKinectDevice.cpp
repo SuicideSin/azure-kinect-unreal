@@ -169,7 +169,9 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 		GEngine->AddOnScreenDebugMessage(0, 5.0f, (numBodies > 0 ? FColor::Cyan : FColor::Red), FString::Printf(TEXT("%zu bodies are detected"), numBodies));
 	}
 
-	for (size_t i = 0; i < numBodies; i++)
+	// Get the skeleton data for the tracked bodies
+	size_t i = 0;
+	for (; i < FMath::Min(numBodies, static_cast<size_t>(MaxBodies)); i++)
 	{
 		k4abt_body_t body;
 		k4a_result_t bodySkeletonResult = k4abt_frame_get_body_skeleton(bodyFrame, i, &body.skeleton);
@@ -193,6 +195,12 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 
 	// Release the body frame
 	k4abt_frame_release(bodyFrame);
+
+	// Set all the remaining Bodies to be Not tracked
+	for (uint64 j = i; j < static_cast<uint64>(MaxBodies); j++)
+	{
+		Bodies[j]->bIsTracked = false;
+	}
 }
 
 int32 AzureKinectDevice::GetTimeOutInMilliSecs() const

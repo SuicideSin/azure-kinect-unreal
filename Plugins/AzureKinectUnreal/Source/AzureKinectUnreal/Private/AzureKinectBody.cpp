@@ -39,9 +39,9 @@ FAzureKinectJoint UAzureKinectBody::GetJoint(int32 index) const
 
 void UAzureKinectBody::UpdateBodyWithKinectInfo()
 {
-	Id = NativeBody.id;
-
 	if (!bIsTracked) return;
+
+	Id = NativeBody.id;
 
 	for (uint32 i = 0; i < JointCount; i++)
 	{
