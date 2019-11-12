@@ -11,8 +11,8 @@
 DECLARE_LOG_CATEGORY_EXTERN(AzureKinectDeviceLog, Log, All);
 
 /**
- * A representation of an Azure Kinect Device that is used to call the
- * device specific (K4A) C API for starting & stopping camera sensors,
+ * A representation of the Native Azure Kinect Device that is used to call the
+ * connected device's (K4A & K4ABT) API for starting & stopping camera sensors,
  * creating & destroying the body tracker, capturing the body frame etc.
  */
 class AZUREKINECTUNREAL_API AzureKinectDevice

@@ -9,7 +9,7 @@
 #include "AzureKinectBody.generated.h"
 
 /**
- * A representation of the Azure Kinect Body Skeleton joint.
+ * A representation of the Native Azure Kinect Body Skeleton joint.
  * This stores the kinect skeleton joint position and orientation 
  * data by converting them from Kinect camera co-ordinate system to
  * Unreal co-ordinate system and maps them to the Unreal mannequin.
@@ -119,7 +119,7 @@ struct FAzureKinectJoint
 
 
 /**
- * A representation of the Azure Kinect Body that contains Joints.
+ * A representation of the Native Azure Kinect Body that contains Joints.
  */
 UCLASS(BlueprintType, Category = "Azure Kinect|Body")
 class AZUREKINECTUNREAL_API UAzureKinectBody : public UObject
