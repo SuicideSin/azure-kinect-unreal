@@ -1,8 +1,8 @@
 # Azure Kinect Unreal Plugin
 
-This Unreal project contains the Azure Kinect Plugin and sample map to test the Plugin.
+This Unreal (4.23) project contains the Azure Kinect Plugin and sample map to test the Plugin. The Plugin integrates the **Azure Kinect Sensor SDK (K4A)** and **Azure Kinect Body Tracking SDK (K4ABT)**. It captures and processes the Body Tracking data and maps it onto the Unreal Mannequin skeletal mesh. The plugin supports tracking up to a maximum of 10 bodies.
 
-### SDKs
+## SDKs
 
 - [Azure Kinect SDK 1.2.0](https://docs.microsoft.com/en-us/azure/kinect-dk/sensor-sdk-download)
 - [Azure Kinect Body Tracking SDK 0.9.3](https://docs.microsoft.com/en-us/azure/kinect-dk/body-sdk-download)
@@ -37,8 +37,10 @@ Plugins/AzureKinectUnreal/Binaries/Win64/
  - k4abt.dll
  - depthengine_2_0.dll
 ```
-_**Important Note:** In order to run the project in Unreal Editor and call the Azure Kinect API without issues, the below mentioned dependent files should be copied to the Unreal installation folder where `UE4Editor.exe` resides._
-_Another thing that can be done instead of copying the below dll files to `Unreal installation` folder is to add the folder path where these dlls reside to the `Path` variable in `Environment Variables` for User or System. The exception is `dnn_model_2_0.onnx` file which **should** be copied to the Unreal installation folder in order for `k4abt (Body Tracking)` API to work._
+_**Important Note:** In order to run the project in Unreal Editor and call the Azure Kinect API without issues, the below mentioned dependent files should be copied to the Unreal installation folder where `UE4Editor.exe` resides. These files can be found in `<Azure Kinect Body Tracking SDK installation>/tools` folder._
+
+_Another thing that can be done instead of copying the below files to `Unreal installation` folder is to add the folder path where these dlls reside to the `Path` variable in `Environment Variables` for User or System. The exception is `dnn_model_2_0.onnx` file which **should** be copied to the Unreal installation folder in order for `k4abt (Body Tracking)` API to work._ _[For Reference check SDK Issue 709](https://github.com/microsoft/Azure-Kinect-Sensor-SDK/issues/709#issuecomment-545121230)_
+
 ```
 <unreal_installation_folder>/Engine/Binaries/Win64/
  - onnxruntime.dll
@@ -47,11 +49,9 @@ _Another thing that can be done instead of copying the below dll files to `Unrea
  - cudart64_100.dll
  - cublas64_100.dll
 ```
-Reference : [Azure Kinect SDK - Issue 709](https://github.com/microsoft/Azure-Kinect-Sensor-SDK/issues/709#issuecomment-545121230)
-
 
 ### Disclaimer
 
- - The plugin has not been thoroughly tested with one connected Azure Kinect device for tracking multiple bodies although the plugin supports it.
+ - The plugin has **not** been thoroughly tested with one connected Azure Kinect device for tracking multiple bodies although the plugin supports it.
 
  - The plugin has **not at all been tested** with multiple Azure Kinect Devices connected to one PC.
