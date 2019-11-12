@@ -52,6 +52,8 @@ _Another thing that can be done instead of copying the below files to `Unreal in
 
 ### Disclaimer
 
+ - The plugin supports tracking with one connected Azure Kinect device for tracking one body.
+ 
  - The plugin has **not** been thoroughly tested with one connected Azure Kinect device for tracking multiple bodies although the plugin supports it.
 
  - The plugin has **not at all been tested** with multiple Azure Kinect Devices connected to one PC.
