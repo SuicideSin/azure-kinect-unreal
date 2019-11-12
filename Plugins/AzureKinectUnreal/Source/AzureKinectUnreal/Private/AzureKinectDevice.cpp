@@ -3,6 +3,7 @@
 
 #include "AzureKinectDevice.h"
 #include "Containers/Ticker.h"
+#include "Engine/Engine.h"
 
 DEFINE_LOG_CATEGORY(AzureKinectDeviceLog);
 
