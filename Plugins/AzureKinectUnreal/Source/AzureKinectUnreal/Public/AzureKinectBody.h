@@ -27,7 +27,7 @@ struct FAzureKinectJoint
 	UPROPERTY(BlueprintReadOnly, Category = "Azure Kinect|Body|Joints")
 	FRotator Orientation;
 
-	//UPROPERTY(BlueprintReadWrite, Category = "Azure Kinect|Body|Joints")
+	UPROPERTY(BlueprintReadWrite, Category = "Azure Kinect|Body|Joints")
 	float PositionMultiplier = 0.5f;
 
 	/** The index of the joint that corresponds to the integral value of the joint enum. */

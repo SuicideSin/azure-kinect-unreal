@@ -47,6 +47,7 @@ void UAzureKinectBody::UpdateBodyWithKinectInfo()
 	{
 		Joints[i].UpdateFromNativeJoint(NativeBody.skeleton.joints[i], bIsMirrored);
 
+		// Uncomment this below section to debug the Position or Orientation of the joints
 		//if (GEngine)
 		//{
 		//	//GEngine->AddOnScreenDebugMessage((int32)(i + 2), 5.0f, FColor::Cyan, FString::Printf(TEXT("        %d : Pos :(%f, %f, %f)"), 

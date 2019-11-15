@@ -100,7 +100,7 @@ void AzureKinectDevice::Shutdown()
 		k4abt_tracker_shutdown(NativeBodyTracker);
 		k4abt_tracker_destroy(NativeBodyTracker);
 		NativeBodyTracker = nullptr;
-		UE_LOG(AzureKinectDeviceLog, Warning, TEXT("BodyTracker is Shutdown and Destroyed"));
+		UE_LOG(AzureKinectDeviceLog, Warning, TEXT("BodyTracker Shutdown and Destroyed"));
 	}
 
 	if (NativeKinectDevice)
@@ -164,7 +164,6 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 
 	// Successfully popped the body tracking result
 	size_t numBodies = k4abt_frame_get_num_bodies(bodyFrame);
-	//UE_CLOG(bShowAllLogs, AzureKinectDeviceLog, Warning, TEXT("%zu bodies are detected"), numBodies);
 	if (GEngine && bShowOnScreenMsgs)
 	{
 		GEngine->AddOnScreenDebugMessage(0, 5.0f, (numBodies > 0 ? FColor::Cyan : FColor::Red), FString::Printf(TEXT("%zu bodies are detected"), numBodies));
@@ -240,10 +239,8 @@ void AzureKinectDevice::StartKinectThread()
 
 bool AzureKinectDevice::OnTick(float DeltaTime)
 {
-	//UE_LOG(AzureKinectDeviceLog, Log, TEXT("Ticking : %f"), DeltaTime);
 	if (bIsInitialized)
 	{
-		//for (uint32 i = 0; i < MaxBodies; i++)
 		for (UAzureKinectBody *Body : Bodies)
 		{
 			Body->UpdateBodyWithKinectInfo();

@@ -20,7 +20,7 @@ class AZUREKINECTUNREAL_API AzureKinectDevice
 public:
 	/** Ctor */
 	AzureKinectDevice();
-	/** Ctor that initializes this azure kinect devie with the id and timeout params. */
+	/** Ctor that initializes this azure kinect device with the id and timeout params. */
 	AzureKinectDevice(int32 DeviceId, int32 TimeOut);
 	/** Destructor */
 	~AzureKinectDevice();

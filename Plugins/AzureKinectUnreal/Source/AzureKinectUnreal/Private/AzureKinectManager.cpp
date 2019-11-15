@@ -15,11 +15,6 @@ UAzureKinectManager::~UAzureKinectManager()
 {
 	ShutdownAllDevices();
 
-	//if (Instance)
-	//{
-	//	delete Instance;
-	//	Instance = nullptr;
-	//}
 	RemoveFromRoot();
 	Instance = nullptr;
 }
@@ -77,16 +72,6 @@ void UAzureKinectManager::ShutdownDevice(int32 DeviceId)
 	(*Device)->Shutdown();
 	Instance->KinectDevicesById.Remove(DeviceId);
 	UE_LOG(AzureKinectLog, Warning, TEXT("Kinect device (id : %d) was shutdown. TMap count : %d"), DeviceId, Instance->KinectDevicesById.Num());
-
-	//AzureKinectDevice *Device = nullptr;
-	//bool bDidFind = Instance->KinectDevicesById.RemoveAndCopyValue(DeviceId, Device);
-	//if (!Device)
-	//{
-	//	UE_LOG(AzureKinectLog, Error, TEXT("Kinect device (id : %d) was not initialized to be shutdown"), DeviceId);
-	//	return;
-	//}
-	//
-	//Device->Shutdown();
 }
 
 bool UAzureKinectManager::IsDeviceInitialized(int32 DeviceId)
