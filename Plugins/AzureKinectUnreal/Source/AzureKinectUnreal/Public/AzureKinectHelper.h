@@ -52,7 +52,7 @@ enum class EKinectBodyJointId : uint8
 	EAR_LEFT        UMETA(DisplayName = "Ear Left"),
 	EYE_RIGHT       UMETA(DisplayName = "Eye Right"),
 	EAR_RIGHT       UMETA(DisplayName = "Ear Right"),
-	COUNT           UMETA(DisplayName = "COUNT"),
+	COUNT           UMETA(DisplayName = "COUNT", Hidden),
 };
 
 
