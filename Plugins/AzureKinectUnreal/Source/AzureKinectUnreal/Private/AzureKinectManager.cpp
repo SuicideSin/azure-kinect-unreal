@@ -49,7 +49,7 @@ void UAzureKinectManager::InitDevice(int32 DeviceId, EKinectDepthMode DepthMode,
 	}
 	else
 	{
-		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device (id : %d) initialization Failed"), DeviceId);
+		UE_LOG(AzureKinectLog, Error, TEXT("Kinect device (id : %d) initialization Failed, so cleaning up."), DeviceId);
 		KinectDevice->Shutdown();
 	}
 }

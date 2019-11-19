@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "k4a/k4a.h"
+#include "k4a/k4a.hpp"
 #include "AzureKinectThread.h"
 #include "AzureKinectBody.h"
 #include "Delegates/IDelegateInstance.h"
@@ -51,13 +51,15 @@ public:
 
 private:
 	/** A handle to the native k4a device that is used in starting and stopping camera sensors. */
-	k4a_device_t NativeKinectDevice;
+	k4a::device NativeKinectDevice;
 	/** The Id of this device. Default is 0. */
 	int32 DeviceId;
 	/** A handle to the native k4abt body tracker that is used to get the body frame and the skeleton joints data. */
-	k4abt_tracker_t NativeBodyTracker;
+	k4abt::tracker NativeBodyTracker;
 	/** The timeout for the API calls. Default is 0, which means it is non-blocking. */
 	int32 TimeOutInMilliSecs;
+	/** TimeOutInMilliSecs converted to std::chrono::milliseconds */
+	std::chrono::milliseconds TimeOutInMilliSecsConverted;
 
 	/** A pointer to the thread that does the body capturing. */
 	FAzureKinectThread *Thread;

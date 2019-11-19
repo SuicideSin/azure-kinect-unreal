@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "k4abt.h"
+#include "k4abt.hpp"
 #include "AzureKinectHelper.h"
 #include "AzureKinectBody.generated.h"
 
