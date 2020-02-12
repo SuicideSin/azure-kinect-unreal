@@ -4,8 +4,15 @@ This Unreal (4.24) project contains the Azure Kinect Plugin and sample map to te
 
 ## SDKs
 
-- [Azure Kinect SDK 1.2.0](https://docs.microsoft.com/en-us/azure/kinect-dk/sensor-sdk-download)
-- [Azure Kinect Body Tracking SDK 0.9.3](https://docs.microsoft.com/en-us/azure/kinect-dk/body-sdk-download)
+- [Azure Kinect SDK 1.3.0](https://docs.microsoft.com/en-us/azure/kinect-dk/sensor-sdk-download)
+- [Azure Kinect Body Tracking SDK 1.0.0](https://docs.microsoft.com/en-us/azure/kinect-dk/body-sdk-download)
+
+## To get up and running
+
+ - Add the `<Azure Kinect Body Tracking SDK installation>/tools` folder to the `Path` variable in `Environment Variables` for User or System.
+
+The [Notes](README.md#notes) section below has more FYI.
+
 
 ## Plugin Files
 
@@ -37,23 +44,55 @@ Plugins/AzureKinectUnreal/Binaries/Win64/
  - k4abt.dll
  - depthengine_2_0.dll
 ```
-_**Important Note:** In order to run the project in Unreal Editor and call the Azure Kinect API without issues, the below mentioned dependent files should be copied to the Unreal installation folder where `UE4Editor.exe` resides. These files can be found in `<Azure Kinect Body Tracking SDK installation>/tools` folder._
+_**Important Note 1:** In order to run the project in Unreal Editor and call the Azure Kinect API without issues, one of the following can be done._
+_[For Reference check Azure Kinect SDK Issue 709](https://github.com/microsoft/Azure-Kinect-Sensor-SDK/issues/709#issuecomment-545132613)_
 
-_Another thing that can be done instead of copying the below files to `Unreal installation` folder is to add the folder path where these dlls reside to the `Path` variable in `Environment Variables` for User or System. The exception is `dnn_model_2_0.onnx` file which **should** be copied to the Unreal installation folder in order for `k4abt (Body Tracking)` API to work._ _[For Reference check SDK Issue 709](https://github.com/microsoft/Azure-Kinect-Sensor-SDK/issues/709#issuecomment-545121230)_
+ - _1. Add the `<Azure Kinect Body Tracking SDK installation>/tools` folder to the `Path` variable in `Environment Variables` for User or System._
 
+_(OR)_
+
+ - _2. The below mentioned dependent files can be copied to the `Unreal installation folder` where `UE4Editor.exe` resides. Eg: `C:\Program Files\Epic Games\UE_4.24\Engine\Binaries\Win64`. The dependent dll files can be found in `<Azure Kinect Body Tracking SDK installation>/tools` folder._
 ```
 <unreal_installation_folder>/Engine/Binaries/Win64/
  - onnxruntime.dll
- - dnn_model_2_0.onnx
  - cudnn64_7.dll
  - cudart64_100.dll
  - cublas64_100.dll
 ```
 
-### Disclaimer
+_**Important Note 2:** It is **No** longer required to place the `dnn_model_2_0.onnx` file in the `Unreal Installation folder`. This file is already placed in the `Plugins/AzureKinectUnreal/Binaries/Win64` and Unreal checks this folder and loads the file. This file is needed for the Body Tracking to work._
+
+
+## Disclaimer
 
  - The plugin supports tracking with one connected Azure Kinect device for tracking one body.
  
  - The plugin has **not** been thoroughly tested with one connected Azure Kinect device for tracking multiple bodies although the plugin supports it.
 
  - The plugin has **not at all been tested** with multiple Azure Kinect Devices connected to one PC.
+
+
+## Troubleshooting
+
+Kindly check the logs (Project, k4a.log, k4abt.log) to see if there is anything regarding the issue you are having trouble with and raise a [Github Issue](https://github.com/secretlocation/azure-kinect-unreal/issues) with the information found in logs.
+
+#### The Project doesn't open.
+
+Delete the `Project/Binaries` and only the `UE4` dlls in the `Plugin/AzureKinectUnreal/Binaries` folder and try again. If it still doesn't open, try building the Project in Visual Studio and check if there are any issues.
+
+Kindly check the project log file to see what the issue is. It is located in `<project>/Saved/Logs/` folder.
+
+Also, check if `Plugin/AzureKinectUnreal/Binaries` contains the dependent dll files `k4a.dll`, `k4abt.dll` and `depthengine_2_0.dll`. 
+
+#### Unreal crashes when PIE (Play in Editor).
+
+Kindly check the following.
+ - `Path` Environment variable has the `<Azure Kinect Body Tracking SDK installation>/tools` folder added.
+ - The `Plugins/AzureKinectUnreal/Binaries/Win64` contains the `k4a.dll`, `k4abt.dll`, `depthengine_2_0.dll` and `dnn_model_2_0.onnx` files.
+ - The version of Azure Kinect Sensor SDK and Azure Kinect Body Tracking SDK installed in your PC is the same as mentioned above under [SDKs](README.md#sdks) section.
+
+#### Pressing play doesn't show anything.
+
+Kindly check the `Output Log` window and if the issue is something related to the `Device` then check the `k4a.log` and if it is related to the `Body Tracking` then check the `k4abt.log`. These log files can be found in `<unreal_installation_folder>/Engine/Binaries/Win64/`.
+
+If these log files are not present then kindly check [here](https://docs.microsoft.com/en-us/azure/kinect-dk/troubleshooting#collecting-logs) in order to enable the logs.
