@@ -122,7 +122,7 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 		return;
 	}
 
-	size_t i = 0;
+	uint32_t i = 0;
 	try
 	{
 		// Capture a depth frame
@@ -148,14 +148,14 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 		}
 
 		// Successfully popped the body tracking result
-		size_t numBodies = bodyFrame.get_num_bodies();
+		uint32_t numBodies = bodyFrame.get_num_bodies();
 		if (GEngine && bShowOnScreenMsgs)
 		{
 			GEngine->AddOnScreenDebugMessage(0, 5.0f, (numBodies > 0 ? FColor::Cyan : FColor::Red), FString::Printf(TEXT("%zu bodies are detected"), numBodies));
 		}
 
 		// Get the skeleton data for the tracked bodies
-		for (; i < FMath::Min(numBodies, static_cast<size_t>(MaxBodies)); i++)
+		for (; i < FMath::Min(numBodies, MaxBodies); i++)
 		{
 			k4abt_body_t body;
 			try
@@ -187,7 +187,7 @@ void AzureKinectDevice::CaptureBodyTrackingFrame()
 	}
 
 	// Set all the remaining Bodies to be Not tracked
-	for (uint64 j = i; j < static_cast<uint64>(MaxBodies); j++)
+	for (uint32 j = i; j < MaxBodies; j++)
 	{
 		Bodies[j]->bIsTracked = false;
 	}
