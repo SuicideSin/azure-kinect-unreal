@@ -27,7 +27,7 @@ UENUM(BlueprintType, Category = "Azure Kinect|Enums")
 enum class EKinectBodyJointId : uint8
 {
 	PELVIS = 0      UMETA(DisplayName = "Pelvis"),
-	SPINE_NAVAL     UMETA(DisplayName = "Spine Naval"),
+	SPINE_NAVEL     UMETA(DisplayName = "Spine Navel"),
 	SPINE_CHEST     UMETA(DisplayName = "Spine Chest"),
 	NECK            UMETA(DisplayName = "Neck"),
 	CLAVICLE_LEFT   UMETA(DisplayName = "Clavicle Left"),
