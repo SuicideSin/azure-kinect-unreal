@@ -74,8 +74,8 @@ public class AzureKinectUnreal : ModuleRules
 		PublicAdditionalLibraries.AddRange(
 			new string[]
 			{
-                Path.Combine(azureKinectSensorSDKPath, "amd64", "lib", "k4a.lib"),
-                Path.Combine(azureKinectBodyTrackingSDKPath, "amd64", "lib", "k4abt.lib")
+				Path.Combine(azureKinectSensorSDKPath, "amd64", "lib", "k4a.lib"),
+				Path.Combine(azureKinectBodyTrackingSDKPath, "amd64", "lib", "k4abt.lib")
 			});
 
 		// Ensure that the DLLs are staged along with the executable
